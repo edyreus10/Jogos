@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Brinca!">
+<meta name="theme-color" content="#1a0533">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Brincar & Aprender</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
+:root{
+  --bg:#1a0533;
+  --surface:#2a0f4a;
+  --card:#35126080;
+  --border:#6040a0;
+  --purple:#a855f7;
+  --purple-lt:#d8b4fe;
+  --yellow:#fbbf24;
+  --green:#22c55e;
+  --red:#f87171;
+  --blue:#60a5fa;
+  --pink:#f472b6;
+  --orange:#fb923c;
+  --text:#fff;
+  --muted:#c4b5fd;
+  --r:18px;
+  --rs:12px;
+}
+html,body{height:100%;background:#000;}
+body{display:flex;justify-content:center;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+#app{background:var(--bg);width:100%;max-width:430px;height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;padding-top:max(env(safe-area-inset-top),14px);padding-bottom:10px;padding-left:16px;padding-right:16px;gap:10px;background:var(--surface);border-bottom:2px solid var(--border);flex-shrink:0;}
+.tb-title{font-size:1.05rem;font-weight:700;color:var(--text);flex:1;}
+.tb-back{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.6rem;padding:0 8px 0 0;line-height:1;}
+.tb-info{background:#3d1870;border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:0.78rem;color:var(--purple-lt);white-space:nowrap;}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;}
+
+/* NAVBAR */
+.navbar{display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border-top:2px solid var(--border);padding:8px 0;padding-bottom:max(env(safe-area-inset-bottom),8px);flex-shrink:0;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px;}
+.nav-icon{font-size:1.4rem;}
+.nav-lbl{font-size:0.6rem;color:var(--muted);}
+.nav-item.active .nav-lbl{color:var(--yellow);}
+
+/* SCREENS */
+.screen{display:none;}.screen.active{display:block;}
+
+/* HOME */
+.home-hero{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:1.25rem 1rem;margin-bottom:1rem;text-align:center;}
+.hero-icon{font-size:3rem;margin-bottom:6px;}
+.hero-title{font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:4px;}
+.hero-sub{font-size:0.82rem;color:var(--muted);}
+.stars-row{font-size:1.2rem;margin-top:6px;letter-spacing:2px;}
+
+.game-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1rem;}
+.game-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:1.1rem 0.75rem;cursor:pointer;text-align:center;transition:transform .12s;}
+.game-card:active{transform:scale(0.94);}
+.game-card.sel{border-color:var(--yellow);background:#3d1870;}
+.gc-icon{font-size:2.2rem;margin-bottom:6px;}
+.gc-name{font-size:0.9rem;font-weight:700;color:var(--text);}
+.gc-desc{font-size:0.7rem;color:var(--muted);margin-top:3px;line-height:1.3;}
+
+/* BUTTONS */
+.btn-play{display:block;width:100%;background:var(--purple);color:#fff;border:none;border-radius:var(--r);padding:1.1rem;font-size:1.1rem;font-weight:800;cursor:pointer;margin-bottom:10px;letter-spacing:.3px;}
+.btn-play:active{transform:scale(0.97);}
+.btn-outline{display:block;width:100%;background:transparent;border:2px solid var(--border);border-radius:var(--r);padding:.9rem;font-size:.95rem;color:var(--muted);cursor:pointer;margin-bottom:10px;font-weight:600;}
+.btn-outline:active{transform:scale(0.97);}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:1rem;}
+.stat-box{background:var(--surface);border:2px solid var(--border);border-radius:var(--rs);padding:.75rem;}
+.stat-lbl{font-size:0.7rem;color:var(--muted);}
+.stat-val{font-size:1.4rem;font-weight:800;color:var(--text);margin-top:2px;}
+
+/* TIMER BAR */
+.tbar-wrap{height:8px;background:var(--surface);border-radius:4px;margin-bottom:1rem;overflow:hidden;border:1px solid var(--border);}
+.tbar{height:100%;border-radius:4px;background:var(--purple);transition:width .1s linear,background .3s;}
+
+/* FEEDBACK */
+.fb{text-align:center;font-size:1.2rem;font-weight:800;min-height:1.8rem;margin-bottom:.5rem;}
+.fb.ok{color:var(--green);}.fb.err{color:var(--red);}
+
+/* PILL */
+.pill{display:inline-block;background:#3d1870;border:1px solid var(--border);color:var(--purple-lt);font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:20px;}
+.pills-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.75rem;}
+
+/* LEVEL BADGE */
+.lvl-badge{display:inline-block;background:var(--yellow);color:#78350f;font-size:.72rem;font-weight:800;border-radius:20px;padding:4px 12px;margin-bottom:.75rem;}
+
+/* ── CORES ── */
+.prompt-txt{font-size:.95rem;color:var(--muted);margin-bottom:.5rem;text-align:center;}
+.word-lbl{font-size:2rem;font-weight:800;padding:.5rem 1.5rem;border-radius:var(--r);display:inline-block;color:#fff;margin-bottom:.75rem;}
+.colors-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.color-btn{height:88px;border-radius:var(--r);border:3px solid transparent;cursor:pointer;transition:transform .1s;font-size:1rem;font-weight:700;color:rgba(0,0,0,.4);}
+.color-btn:active{transform:scale(0.93);}
+
+/* ── FORMAS ── */
+.shapes-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.shape-btn{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:1rem .5rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--muted);}
+.shape-btn:active{transform:scale(0.94);}
+
+/* ── CONTAGEM ── */
+.count-area{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:1rem;background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:.85rem;min-height:80px;align-items:center;}
+.count-emoji{font-size:2.2rem;line-height:1;}
+.count-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.count-btn{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:1.1rem .5rem;font-size:1.8rem;font-weight:800;cursor:pointer;text-align:center;color:var(--text);}
+.count-btn:active{transform:scale(0.94);}
+
+/* ── MEMÓRIA ── */
+.mem-prompt{font-size:.88rem;color:var(--muted);text-align:center;margin-bottom:.75rem;font-weight:600;}
+.mem-grid{display:grid;gap:8px;justify-content:center;}
+.mc{border-radius:var(--rs);perspective:600px;cursor:pointer;}
+.mc-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .32s;}
+.mc.flipped .mc-inner{transform:rotateY(180deg);}
+.mface{position:absolute;width:100%;height:100%;border-radius:var(--rs);backface-visibility:hidden;display:flex;align-items:center;justify-content:center;}
+.mback{background:var(--purple);font-size:1.4rem;color:#fff;}
+.mfront{background:var(--surface);border:2px solid var(--border);transform:rotateY(180deg);font-size:2rem;}
+.mc.matched .mfront{border:3px solid var(--green);background:#052e16;}
+
+/* RESULTADO */
+.res-center{text-align:center;padding:.5rem 0;}
+.res-icon{font-size:3.5rem;margin-bottom:.75rem;}
+.res-ttl{font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:4px;}
+.res-sub{font-size:.85rem;color:var(--muted);margin-bottom:1rem;}
+
+/* INSTALL BANNER */
+#install-banner{display:none;background:var(--surface);border-top:2px solid var(--border);padding:10px 16px;flex-shrink:0;text-align:center;}
+#install-banner p{font-size:.8rem;color:var(--muted);margin-bottom:8px;}
+#install-banner button{background:var(--purple);color:#fff;border:none;border-radius:var(--rs);padding:8px 20px;font-size:.85rem;font-weight:700;cursor:pointer;}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="topbar" id="topbar">
+    <div class="tb-title" id="tb-title">🌟 Brincar & Aprender</div>
+    <div class="tb-info" id="tb-info">⭐ 0</div>
+  </div>
+
+  <div class="content">
+
+    <!-- HOME -->
+    <div id="s-home" class="screen active">
+      <div class="home-hero">
+        <div class="hero-icon">🧠</div>
+        <div class="hero-title">Brincar & Aprender</div>
+        <div class="hero-sub">Jogos divertidos para aprender brincando!</div>
+        <div class="stars-row" id="star-display">⭐⭐⭐</div>
+      </div>
+      <div class="game-grid" id="mode-grid"></div>
+      <button class="btn-play" onclick="startSel()">Jogar agora! 🎮</button>
+    </div>
+
+    <!-- GAME -->
+    <div id="s-game" class="screen">
+      <div class="tbar-wrap"><div class="tbar" id="tbar"></div></div>
+      <div class="fb" id="fb"></div>
+      <div id="ga"></div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="s-result" class="screen">
+      <div class="res-center">
+        <div class="res-icon" id="r-icon">🎉</div>
+        <div class="res-ttl" id="r-ttl">Parabéns!</div>
+        <div class="res-sub" id="r-sub"></div>
+        <div class="stats-row" id="r-stats"></div>
+        <button class="btn-play" id="r-next">Próximo nível! ▶</button>
+        <button class="btn-outline" onclick="goHome()">Voltar ao menu</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="navbar">
+    <div class="nav-item active" onclick="navGo('cores')" id="nav-cores"><div class="nav-icon">🎨</div><div class="nav-lbl">Cores</div></div>
+    <div class="nav-item" onclick="navGo('formas')" id="nav-formas"><div class="nav-icon">🔷</div><div class="nav-lbl">Formas</div></div>
+    <div class="nav-item" onclick="navGo('contagem')" id="nav-contagem"><div class="nav-icon">🔢</div><div class="nav-lbl">Contagem</div></div>
+    <div class="nav-item" onclick="navGo('memoria')" id="nav-memoria"><div class="nav-icon">🃏</div><div class="nav-lbl">Memória</div></div>
+  </div>
+
+  <div id="install-banner">
+    <p>Instale o app para jogar offline a qualquer hora!</p>
+    <button id="install-btn">Instalar no celular 📲</button>
+  </div>
+
+</div>
+<script>
+/* ── SERVICE WORKER ── */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js').catch(() => {});
+}
+
+/* ── PWA INSTALL ── */
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault(); deferredPrompt = e;
+  document.getElementById('install-banner').style.display = 'block';
+});
+document.getElementById('install-btn').addEventListener('click', () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => { deferredPrompt = null; document.getElementById('install-banner').style.display = 'none'; });
+});
+window.addEventListener('appinstalled', () => { document.getElementById('install-banner').style.display = 'none'; });
+
+/* ── DATA ── */
+const MODES = [
+  { id: 'cores',    name: 'Cores',    icon: '🎨', desc: 'Identifique as cores certas' },
+  { id: 'formas',   name: 'Formas',   icon: '🔷', desc: 'Encontre a forma pedida' },
+  { id: 'contagem', name: 'Contagem', icon: '🔢', desc: 'Conte os objetos' },
+  { id: 'memoria',  name: 'Memória',  icon: '🃏', desc: 'Encontre os pares iguais' },
+];
+
+const CORES = [
+  { name: 'Vermelho', hex: '#ef4444' },
+  { name: 'Azul',     hex: '#3b82f6' },
+  { name: 'Verde',    hex: '#22c55e' },
+  { name: 'Amarelo',  hex: '#eab308' },
+  { name: 'Roxo',     hex: '#a855f7' },
+  { name: 'Rosa',     hex: '#ec4899' },
+  { name: 'Laranja',  hex: '#f97316' },
+  { name: 'Marrom',   hex: '#92400e' },
+];
+
+const FORMAS = [
+  { name: 'Círculo',   svg: '<circle cx="36" cy="36" r="30" fill="currentColor"/>' },
+  { name: 'Quadrado',  svg: '<rect x="5" y="5" width="62" height="62" rx="4" fill="currentColor"/>' },
+  { name: 'Triângulo', svg: '<polygon points="36,3 69,69 3,69" fill="currentColor"/>' },
+  { name: 'Estrela',   svg: '<polygon points="36,3 43,27 69,27 49,43 57,67 36,52 15,67 23,43 3,27 29,27" fill="currentColor"/>' },
+  { name: 'Coração',   svg: '<path d="M36 62 C36 62 8 44 8 24 C8 14 18 8 28 14 C32 17 36 22 36 22 C36 22 40 17 44 14 C54 8 64 14 64 24 C64 44 36 62 36 62Z" fill="currentColor"/>' },
+  { name: 'Diamante',  svg: '<polygon points="36,4 68,36 36,68 4,36" fill="currentColor"/>' },
+];
+
+const EMOJIS = ['🐶','🐱','🐸','🦊','🐼','🐨','🦁','🐯','🐻','🦋','🌸','⭐','🍎','🍌','🍕','🚗','🏠','🌈','🎈','🎀'];
+const MEM_EMOJIS = ['🐶','🐱','🐸','🦊','🐼','🐨','🦁','🐯','🐻','🦋','🌸','⭐','🍎','🍌','🍕','🚀','🌈','🎈','🎀','🎯','🍦','🦄','🐠','🌻','🍉'];
+const SHAPE_COLORS = ['#a855f7','#22c55e','#f97316','#eab308','#ec4899','#3b82f6'];
+
+/* ── HELPERS ── */
+function shuf(a) { return [...a].sort(() => Math.random() - .5); }
+function rnd(a)  { return a[Math.floor(Math.random() * a.length)]; }
+function $i(id)  { return document.getElementById(id); }
+
+/* ── STATE ── */
+let selMode = 'cores', st = {}, totalPts = parseInt(localStorage.getItem('brinca_pts') || '0'),
+    totalNivel = parseInt(localStorage.getItem('brinca_nivel') || '0'), tmr = null;
+
+function savePts() { localStorage.setItem('brinca_pts', totalPts); localStorage.setItem('brinca_nivel', totalNivel); }
+function addPts(n) { totalPts += n; savePts(); $i('tb-info').textContent = '⭐ ' + totalPts; }
+function getStars() {
+  if (totalPts >= 500) return '🌟🌟🌟🌟🌟';
+  if (totalPts >= 200) return '⭐⭐⭐⭐';
+  if (totalPts >= 50)  return '⭐⭐⭐';
+  if (totalPts >= 10)  return '⭐⭐';
+  return '⭐';
+}
+$i('tb-info').textContent = '⭐ ' + totalPts;
+
+/* ── SCREENS ── */
+function showScreen(s) { document.querySelectorAll('.screen').forEach(x => x.classList.remove('active')); $i(s).classList.add('active'); }
+function setTopbar(title, back) {
+  $i('tb-title').innerHTML = back ? `<button class="tb-back" onclick="goHome()">‹</button>${title}` : title;
+}
+function goHome() {
+  clearTmr(); showScreen('s-home'); setTopbar('🌟 Brincar & Aprender', false);
+  if ($i('star-display')) $i('star-display').textContent = getStars();
+  renderModes();
+}
+function navGo(mode) {
+  selMode = mode;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  $i('nav-' + mode).classList.add('active');
+  goHome(); startSel();
+}
+function renderModes() {
+  $i('mode-grid').innerHTML = MODES.map(m =>
+    `<div class="game-card${m.id === selMode ? ' sel' : ''}" onclick="selM('${m.id}')">
+      <div class="gc-icon">${m.icon}</div>
+      <div class="gc-name">${m.name}</div>
+      <div class="gc-desc">${m.desc}</div>
+    </div>`).join('');
+}
+function selM(id) {
+  selMode = id; renderModes();
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  $i('nav-' + id).classList.add('active');
+}
+renderModes();
+function startSel() {
+  showScreen('s-game');
+  if (selMode === 'cores')    initCores();
+  else if (selMode === 'formas')   initFormas();
+  else if (selMode === 'contagem') initContagem();
+  else                             initMemoria();
+}
+
+/* ── TIMER ── */
+function clearTmr() { if (tmr) { clearInterval(tmr); tmr = null; } }
+function startTmr(secs, onEnd) {
+  clearTmr();
+  const bar = $i('tbar'); let rem = secs;
+  bar.style.width = '100%'; bar.style.background = '#a855f7';
+  tmr = setInterval(() => {
+    rem -= .1; const p = Math.max(0, rem / secs * 100);
+    bar.style.width = p + '%';
+    bar.style.background = p > 40 ? '#a855f7' : p > 20 ? '#f97316' : '#ef4444';
+    if (rem <= 0) { clearTmr(); onEnd(); }
+  }, 100);
+}
+function setFB(msg, cls) {
+  const e = $i('fb'); e.textContent = msg; e.className = 'fb ' + (cls || '');
+  if (cls) setTimeout(() => { e.textContent = ''; e.className = 'fb'; }, 900);
+}
+function disGA() { $i('ga').querySelectorAll('button,.mc').forEach(b => b.style.pointerEvents = 'none'); }
+
+/* ── PROGRESSION ── */
+function onCerto(extra) {
+  const pts = 10 * (st.nivel || 1);
+  addPts(pts); totalNivel++; savePts();
+  setFB('✅ Muito bem! +' + pts, 'ok');
+  st.qInNivel = (st.qInNivel || 0) + 1;
+  st.acertos  = (st.acertos  || 0) + 1;
+  const maxQ = 3 + Math.floor((st.nivel || 1) / 3);
+  const go = () => {
+    if (st.qInNivel >= maxQ) showResult(true);
+    else loadQ();
+  };
+  if (extra) go(); else setTimeout(go, 900);
+}
+function onErro() {
+  st.vidas--;
+  $i('tb-info').textContent = '❤️'.repeat(Math.max(0, st.vidas)) + (st.vidas < 3 ? ' ⭐' + totalPts : '');
+  st.qInNivel = (st.qInNivel || 0) + 1;
+  const maxQ = 3 + Math.floor((st.nivel || 1) / 3);
+  if (st.vidas <= 0) {
+    setFB('💔 Vamos tentar de novo!', 'err');
+    setTimeout(() => showResult(false), 900);
+  } else {
+    setFB('❌ Quase! Tente de novo!', 'err');
+    if (st.qInNivel >= maxQ) setTimeout(() => showResult(false), 900);
+    else setTimeout(loadQ, 1000);
+  }
+}
+function loadQ() {
+  setFB('');
+  if (selMode === 'cores')    loadCores();
+  else if (selMode === 'formas')   loadFormas();
+  else if (selMode === 'contagem') loadContagem();
+}
+
+function showResult(ganhou) {
+  clearTmr();
+  $i('r-icon').textContent = ganhou ? '🎉' : '😊';
+  $i('r-ttl').textContent  = ganhou ? 'Arrasou!' : 'Boa tentativa!';
+  $i('r-sub').textContent  = ganhou
+    ? 'Você completou o nível ' + st.nivel + '! Continue assim!'
+    : 'Você está melhorando! Tente de novo!';
+  $i('r-stats').innerHTML  =
+    `<div class="stat-box"><div class="stat-lbl">Pontuação</div><div class="stat-val">${totalPts}</div></div>
+     <div class="stat-box"><div class="stat-lbl">Nível</div><div class="stat-val">${st.nivel}</div></div>
+     <div class="stat-box"><div class="stat-lbl">Acertos</div><div class="stat-val">${st.acertos || 0}</div></div>
+     <div class="stat-box"><div class="stat-lbl">Estrelas</div><div class="stat-val">${getStars()}</div></div>`;
+  const nextFn = ganhou
+    ? () => {
+        const oldNivel = st.nivel;
+        st = { modo: selMode, nivel: oldNivel + 1, vidas: 3, qInNivel: 0, acertos: 0 };
+        showScreen('s-game'); updateTopbarGame(); loadQ();
+      }
+    : () => {
+        st.vidas = 3; st.qInNivel = 0; st.acertos = 0;
+        showScreen('s-game'); updateTopbarGame(); loadQ();
+      };
+  $i('r-next').onclick = nextFn;
+  $i('r-next').textContent = ganhou ? 'Próximo nível! ▶' : 'Tentar de novo! ▶';
+  showScreen('s-result');
+}
+function updateTopbarGame() {
+  $i('tb-info').textContent = '❤️'.repeat(st.vidas) + ' ⭐' + totalPts;
+}
+
+/* ═══════ CORES ═══════ */
+function initCores() {
+  st = { modo: 'cores', nivel: (st.nivel || 1), vidas: 3, qInNivel: 0, acertos: 0 };
+  setTopbar('🎨 Cores', true); updateTopbarGame();
+  loadCores();
+}
+function loadCores() {
+  const lvl = st.nivel;
+  const pool = CORES.slice(0, Math.min(4 + Math.floor(lvl / 2), CORES.length));
+  const cor  = rnd(pool);
+  let opts   = shuf(pool).slice(0, Math.min(4 + Math.floor(lvl / 3), pool.length));
+  if (!opts.find(o => o.name === cor.name)) opts[0] = cor;
+  opts = shuf(opts);
+  const t = Math.max(5, 14 - lvl);
+  $i('ga').innerHTML =
+    `<div style="text-align:center;margin-bottom:.75rem">
+       <div class="lvl-badge">✨ Nível ${lvl}</div>
+       <div class="prompt-txt">Toque na cor:</div>
+       <div class="word-lbl" style="background:${cor.hex}">${cor.name}</div>
+     </div>
+     <div class="colors-grid">
+       ${opts.map(c =>
+         `<button class="color-btn" style="background:${c.hex}" onclick="ansCor('${c.name}','${cor.name}')" aria-label="${c.name}"></button>`
+       ).join('')}
+     </div>`;
+  startTmr(t, () => ansCor('__t__', cor.name));
+}
+function ansCor(ch, cor) { clearTmr(); disGA(); ch === cor ? onCerto() : onErro(); }
+
+/* ═══════ FORMAS ═══════ */
+function initFormas() {
+  st = { modo: 'formas', nivel: (st.nivel || 1), vidas: 3, qInNivel: 0, acertos: 0 };
+  setTopbar('🔷 Formas', true); updateTopbarGame();
+  loadFormas();
+}
+function loadFormas() {
+  const lvl  = st.nivel;
+  const pool = FORMAS.slice(0, Math.min(3 + Math.floor(lvl / 2), FORMAS.length));
+  const cor  = rnd(pool);
+  let opts   = shuf(pool).slice(0, Math.min(3 + Math.floor(lvl / 2), pool.length));
+  if (!opts.find(o => o.name === cor.name)) opts[0] = cor;
+  opts = shuf(opts);
+  const col = rnd(SHAPE_COLORS);
+  const t   = Math.max(5, 14 - lvl);
+  $i('ga').innerHTML =
+    `<div style="text-align:center;margin-bottom:.75rem">
+       <div class="lvl-badge">✨ Nível ${lvl}</div>
+       <div class="prompt-txt">Encontre o:</div>
+       <svg width="82" height="82" viewBox="0 0 72 72" style="color:${col};display:block;margin:0 auto 4px">${cor.svg}</svg>
+       <div style="font-size:.85rem;color:var(--muted);font-weight:700">${cor.name}</div>
+     </div>
+     <div class="shapes-grid">
+       ${opts.map((s, i) =>
+         `<button class="shape-btn" onclick="ansForma('${s.name}','${cor.name}')">
+           <svg width="52" height="52" viewBox="0 0 72 72" style="color:${SHAPE_COLORS[i % SHAPE_COLORS.length]}">${s.svg}</svg>
+           <span>${s.name}</span>
+         </button>`
+       ).join('')}
+     </div>`;
+  startTmr(t, () => ansForma('__t__', cor.name));
+}
+function ansForma(ch, cor) { clearTmr(); disGA(); ch === cor ? onCerto() : onErro(); }
+
+/* ═══════ CONTAGEM ═══════ */
+function initContagem() {
+  st = { modo: 'contagem', nivel: (st.nivel || 1), vidas: 3, qInNivel: 0, acertos: 0 };
+  setTopbar('🔢 Contagem', true); updateTopbarGame();
+  loadContagem();
+}
+function loadContagem() {
+  const lvl = st.nivel;
+  const max = Math.min(3 + lvl, 15);
+  const cnt = Math.floor(Math.random() * max) + 1;
+  const em  = rnd(EMOJIS);
+  const wrongs = new Set();
+  while (wrongs.size < 3) {
+    const w = Math.floor(Math.random() * Math.max(max + 2, 5)) + 1;
+    if (w !== cnt) wrongs.add(w);
+  }
+  const opts = shuf([cnt, ...wrongs]);
+  const t    = Math.max(6, 18 - lvl);
+  $i('ga').innerHTML =
+    `<div style="text-align:center;margin-bottom:.5rem">
+       <div class="lvl-badge">✨ Nível ${lvl}</div>
+       <div class="prompt-txt">Quantos tem aqui?</div>
+     </div>
+     <div class="count-area">${Array(cnt).fill(`<span class="count-emoji">${em}</span>`).join('')}</div>
+     <div class="count-grid">${opts.map(n => `<button class="count-btn" onclick="ansCnt(${n},${cnt})">${n}</button>`).join('')}</div>`;
+  startTmr(t, () => ansCnt(-1, cnt));
+}
+function ansCnt(ch, cor) { clearTmr(); disGA(); ch === cor ? onCerto() : onErro(); }
+
+/* ═══════ MEMÓRIA ═══════ */
+let ms = {};
+function initMemoria() {
+  st = { modo: 'memoria', nivel: (st.nivel || 1), vidas: 3, qInNivel: 0, acertos: 0 };
+  setTopbar('🃏 Memória', true); updateTopbarGame();
+  loadMemoria();
+}
+function loadMemoria() {
+  const lvl   = st.nivel;
+  const pairs = Math.min(2 + Math.floor(lvl / 2), 6);
+  const picked = shuf(MEM_EMOJIS).slice(0, pairs);
+  const cards  = shuf([...picked, ...picked].map((e, i) => ({ id: i, emoji: e, matched: false, flipped: false })));
+  ms = { cards, flipped: [], matched: 0, total: pairs, locked: false };
+  clearTmr(); $i('tbar').style.width = '100%'; $i('tbar').style.background = '#a855f7';
+  renderMem();
+}
+function renderMem() {
+  const { cards, matched, total } = ms;
+  const cols = 4, sz = Math.max(60, 80 - total * 3);
+  $i('ga').innerHTML =
+    `<div style="text-align:center;margin-bottom:.5rem">
+       <div class="lvl-badge">✨ Nível ${st.nivel}</div>
+       <div class="mem-prompt">Encontre os pares! (${matched}/${total})</div>
+     </div>
+     <div class="mem-grid" style="grid-template-columns:repeat(${cols},${sz}px)">
+       ${cards.map((c, i) =>
+         `<div class="mc${c.flipped ? ' flipped' : ''}${c.matched ? ' matched' : ''}"
+               style="width:${sz}px;height:${sz}px" onclick="flipMem(${i})"
+               role="button" aria-label="${c.matched || c.flipped ? c.emoji : 'carta'}">
+           <div class="mc-inner">
+             <div class="mface mback">?</div>
+             <div class="mface mfront">${c.emoji}</div>
+           </div>
+         </div>`
+       ).join('')}
+     </div>`;
+}
+function flipMem(i) {
+  if (ms.locked) return;
+  const c = ms.cards[i];
+  if (c.flipped || c.matched) return;
+  c.flipped = true; ms.flipped.push(i); renderMem();
+  if (ms.flipped.length === 2) {
+    ms.locked = true;
+    const [a, b] = ms.flipped;
+    if (ms.cards[a].emoji === ms.cards[b].emoji) {
+      ms.cards[a].matched = true; ms.cards[b].matched = true; ms.matched++;
+      ms.flipped = []; ms.locked = false; renderMem();
+      if (ms.matched >= ms.total) {
+        setFB('🎉 Todos os pares!', 'ok');
+        setTimeout(() => onCerto(true), 700);
+      }
+    } else {
+      setTimeout(() => {
+        ms.cards[a].flipped = false; ms.cards[b].flipped = false;
+        ms.flipped = []; ms.locked = false; renderMem();
+      }, 900);
+    }
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "Brincar & Aprender",
+  "short_name": "Brinca!",
+  "description": "4 jogos educativos para crianças: Cores, Formas, Contagem e Memória",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a0533",
+  "theme_color": "#1a0533",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
