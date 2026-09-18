@@ -268,17 +268,17 @@
 
   /* ============ GALERIA ============ */
   var GALLERY = [
-    { title: 'Fachada', swatch: 'sw-1', big: true, icon: '<path d="M4 21V8l6-4 6 4v13M4 21h16M10 21v-6h4v6"/>' },
-    { title: 'Hall de entrada', swatch: 'sw-2', icon: '<path d="M3 21h18M9 21V9h6v12M9 9V3h6v6"/>' },
-    { title: 'Piscina', swatch: 'sw-3', icon: '<path d="M2 16c1.5-1 3-1 4.5 0s3 1 4.5 0 3-1 4.5 0 3 1 4.5 0M4 20c1.2-.8 2.4-.8 3.6 0s2.4.8 3.6 0 2.4-.8 3.6 0 2.4.8 3.6 0M6 9a3 3 0 106 0 3 3 0 10-6 0"/>' },
+    { title: 'Fachada', swatch: 'sw-1', big: true, photo: 'assets/images/gallery/gallery-fachada.webp', icon: '<path d="M4 21V8l6-4 6 4v13M4 21h16M10 21v-6h4v6"/>' },
+    { title: 'Hall de entrada', swatch: 'sw-2', photo: 'assets/images/gallery/gallery-hall.webp', icon: '<path d="M3 21h18M9 21V9h6v12M9 9V3h6v6"/>' },
+    { title: 'Piscina', swatch: 'sw-3', photo: 'assets/images/gallery/gallery-piscina.webp', icon: '<path d="M2 16c1.5-1 3-1 4.5 0s3 1 4.5 0 3-1 4.5 0 3 1 4.5 0M4 20c1.2-.8 2.4-.8 3.6 0s2.4.8 3.6 0 2.4-.8 3.6 0 2.4.8 3.6 0M6 9a3 3 0 106 0 3 3 0 10-6 0"/>' },
     { title: 'Jardim', swatch: 'sw-4', icon: '<path d="M12 21V10M12 10a5 5 0 015-5c0 3-2 5-5 5zm0 0a5 5 0 00-5-5c0 3 2 5 5 5z"/>' },
     { title: 'Área social', swatch: 'sw-5', big: true, icon: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 2.5-5 6-5s6 2 6 5M14 20c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5"/>' },
     { title: 'Salão de festas', swatch: 'sw-6', icon: '<path d="M12 3v6M8 5l2 4M16 5l-2 4M3 21h18M5 21V13h14v8"/>' },
     { title: 'Coworking', swatch: 'sw-7', icon: '<rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 21h8M12 16v5"/>' },
-    { title: 'Lavanderia', swatch: 'sw-8', icon: '<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M8 6h1"/>' },
+    { title: 'Lavanderia', swatch: 'sw-8', photo: 'assets/images/gallery/gallery-lavanderia.webp', icon: '<rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M8 6h1"/>' },
     { title: 'Bicicletário', swatch: 'sw-9', icon: '<circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="M6 17l4-9h4l4 9M9 8h4"/>' },
     { title: 'Espaço gourmet', swatch: 'sw-10', big: true, icon: '<path d="M6 3v8a3 3 0 003 3v7M6 3v6M9 3v6M18 3c-2 1-2 3-2 5s2 3 2 3v10"/>' },
-    { title: 'Academia', swatch: 'sw-11', icon: '<path d="M4 8v8M20 8v8M4 12h2M18 12h2M8 6v12M16 6v12"/>' },
+    { title: 'Academia', swatch: 'sw-11', photo: 'assets/images/gallery/gallery-academia.webp', icon: '<path d="M4 8v8M20 8v8M4 12h2M18 12h2M8 6v12M16 6v12"/>' },
     { title: 'Áreas de convivência', swatch: 'sw-12', icon: '<path d="M3 12l9-8 9 8M5 10v10h14V10"/>' }
   ];
 
@@ -291,10 +291,11 @@
     el.setAttribute('role', 'button');
     el.setAttribute('aria-label', 'Ver imagem: ' + item.title);
     el.dataset.index = i;
+    var patternAttrs = item.photo ? ' data-src="' + item.photo + '"' : '';
     el.innerHTML =
-      '<div class="pattern ' + item.swatch + '">' +
+      '<div class="pattern ' + item.swatch + (item.photo ? ' has-photo' : '') + '"' + patternAttrs + '>' +
         '<div class="pattern-grid-lines"></div>' +
-        '<div class="pattern-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">' + item.icon + '</svg></div>' +
+        (item.photo ? '' : '<div class="pattern-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">' + item.icon + '</svg></div>') +
       '</div>' +
       '<div class="g-overlay"><span>' + item.title + '</span>' +
         '<span class="g-expand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M8 21H5a2 2 0 01-2-2v-3M16 21h3a2 2 0 002-2v-3"/></svg></span>' +
@@ -342,6 +343,25 @@
     grid.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in'); });
   }
 
+  /* lazy-load gallery photographs — independent of prefers-reduced-motion,
+     since loading an image has nothing to do with animation. */
+  var lazyPhotos = grid.querySelectorAll('.pattern[data-src]');
+  if ('IntersectionObserver' in window && lazyPhotos.length){
+    var photoIo = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if (entry.isIntersecting){
+          var el = entry.target;
+          el.style.backgroundImage = 'url("' + el.dataset.src + '")';
+          el.classList.add('loaded');
+          photoIo.unobserve(el);
+        }
+      });
+    }, { threshold: 0.01, rootMargin: '200px 0px' });
+    lazyPhotos.forEach(function(el){ photoIo.observe(el); });
+  } else {
+    lazyPhotos.forEach(function(el){ el.style.backgroundImage = 'url("' + el.dataset.src + '")'; el.classList.add('loaded'); });
+  }
+
   /* ============ LIGHTBOX ============ */
   var lightbox = document.getElementById('lightbox');
   var lbInner = document.getElementById('lightboxInner');
@@ -354,10 +374,11 @@
 
   GALLERY.forEach(function(item, i){
     var p = document.createElement('div');
-    p.className = 'pattern ' + item.swatch;
+    p.className = 'pattern ' + item.swatch + (item.photo ? ' has-photo' : '');
     p.innerHTML =
       '<div class="pattern-grid-lines"></div>' +
-      '<div class="pattern-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">' + item.icon + '</svg></div>';
+      (item.photo ? '' : '<div class="pattern-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">' + item.icon + '</svg></div>');
+    if (item.photo) p.dataset.src = item.photo;
     lbInner.insertBefore(p, lbTitle);
     lbPanels.push(p);
   });
@@ -376,6 +397,11 @@
   }
   function updateLightbox(){
     lbPanels.forEach(function(p, i){ p.classList.toggle('active', i === lbIndex); });
+    var active = lbPanels[lbIndex];
+    if (active.dataset.src && !active.classList.contains('loaded')){
+      active.style.backgroundImage = 'url("' + active.dataset.src + '")';
+      active.classList.add('loaded');
+    }
     lbTitle.textContent = GALLERY[lbIndex].title;
   }
   function lbNextFn(){ lbIndex = (lbIndex + 1) % GALLERY.length; updateLightbox(); }
