@@ -234,24 +234,32 @@ body.nav-open{overflow:hidden;}
 
 /* ============ HERO ============ */
 .hero{
-  position:relative;min-height:100vh;display:flex;align-items:center;
+  position:relative;min-height:100vh;min-height:100dvh;display:flex;align-items:center;
   overflow:hidden;background:var(--blue-dark);
-  isolation:isolate;
+  isolation:isolate;--slide-ms:6500ms;
 }
 .hero-slides{position:absolute;inset:0;z-index:0;}
 .hero-slide{
   position:absolute;inset:0;opacity:0;
   background-size:cover;background-position:center;
-  transform:scale(1.08);
-  transition:opacity 1.6s ease;
+  transform:scale(1);
+  transition:opacity 1.4s ease;
 }
-.hero-slide.active{opacity:1;animation:kenburns 9s ease-in-out forwards;}
+/* Ken Burns: barely-there zoom + drift, timed to last the whole dwell so
+   the motion never looks "done" before the next crossfade begins. */
+.hero-slide.active{opacity:1;animation:kenburns var(--slide-ms) ease-in-out forwards;}
 @keyframes kenburns{
-  0%{transform:scale(1.08) translate(0,0);}
-  100%{transform:scale(1.18) translate(-1.2%,-1%);}
+  0%{transform:scale(1) translate3d(0,0,0);}
+  100%{transform:scale(1.05) translate3d(-.6%,-.5%,0);}
 }
 .hero-slide .skyline{position:absolute;inset:0;width:100%;height:100%;}
 .hero-slide .grain{position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.08),transparent 60%);}
+/* soft cinematic vignette, shared by every slide */
+.hero-slide::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 45%,transparent 45%,rgba(4,16,36,.38) 100%);
+  pointer-events:none;
+}
 .hero-slide-1{background:linear-gradient(160deg,#0A2C61 0%,#0B4FCB 55%,#0090E4 100%);}
 .hero-slide-2{background:linear-gradient(200deg,#0090E4 0%,#0B4FCB 50%,#0A2C61 100%);}
 .hero-slide-3{background:linear-gradient(140deg,#0A2C61 0%,#0090E4 60%,#0B4FCB 100%);}
@@ -278,12 +286,12 @@ body.nav-open{overflow:hidden;}
 }
 .hero-actions{display:flex;gap:16px;margin-top:42px;flex-wrap:wrap;}
 
-.hero-anim > *{opacity:0;transform:translateY(28px);filter:blur(6px);animation:heroIn .9s var(--ease) forwards;}
-.hero-anim .hero-eyebrow{animation-delay:.15s;}
-.hero-anim h1{animation-delay:.32s;}
-.hero-anim p.lead{animation-delay:.5s;}
-.hero-anim .hero-actions{animation-delay:.68s;}
-@keyframes heroIn{to{opacity:1;transform:none;filter:blur(0);}}
+.hero-anim > *{opacity:0;transform:translateY(24px);animation:heroIn .8s var(--ease-entrance) forwards;}
+.hero-anim .hero-eyebrow{animation-delay:.1s;}
+.hero-anim h1{animation-delay:.24s;}
+.hero-anim p.lead{animation-delay:.42s;}
+.hero-anim .hero-actions{animation-delay:.6s;}
+@keyframes heroIn{to{opacity:1;transform:none;}}
 
 .hero-index{
   position:absolute;left:clamp(20px,5vw,64px);bottom:44px;z-index:3;
@@ -300,9 +308,23 @@ body.nav-open{overflow:hidden;}
 }
 .hero-dots button{width:34px;height:3px;background:rgba(255,255,255,.32);border-radius:3px;overflow:hidden;position:relative;transition:background .3s;}
 .hero-dots button.active{background:rgba(255,255,255,.32);}
-.hero-dots button.active::after{content:'';position:absolute;inset:0;background:#fff;animation:dotfill 8s linear forwards;}
+.hero-dots button.active::after{content:'';position:absolute;inset:0;background:#fff;animation:dotfill var(--slide-ms,6.5s) linear forwards;}
 @keyframes dotfill{from{width:0;}to{width:100%;}}
 .hero-dots button::after{width:0;}
+
+/* prev/next controls — quiet by default, never louder than the headline */
+.hero-arrow{
+  position:absolute;top:50%;z-index:3;width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);
+  transform:translateY(-50%);transition:background .3s var(--ease),border-color .3s var(--ease),transform .3s var(--ease);
+}
+.hero-arrow:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4);}
+.hero-arrow:active{transform:translateY(-50%) scale(.94);}
+.hero-arrow svg{width:18px;height:18px;}
+.hero-arrow-prev{left:clamp(14px,3vw,40px);}
+.hero-arrow-next{right:clamp(14px,3vw,40px);}
+@media(max-width:900px){.hero-arrow{display:none;}}
 
 .scroll-cue{
   position:absolute;left:50%;bottom:18px;transform:translateX(-50%);z-index:3;

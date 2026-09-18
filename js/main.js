@@ -97,12 +97,21 @@
   mobileNav.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', closeMenu); });
 
   /* ============ HERO CAROUSEL ============ */
+  /* Discrete autoplay scheduler (one lightweight setInterval that just
+     toggles a class every few seconds) — the actual crossfade and Ken
+     Burns motion are pure CSS transitions/animations, never driven from
+     JS on every tick. */
+  var heroSection = document.querySelector('.hero');
   var slides = Array.prototype.slice.call(document.querySelectorAll('.hero-slide'));
   var dotsWrap = document.getElementById('heroDots');
   var counterEl = document.getElementById('slideCurrent');
   var progressBar = document.getElementById('heroProgressBar');
-  var SLIDE_MS = 8000;
-  var current = 0, heroTimer = null, progressTimer = null;
+  var prevBtn = document.getElementById('heroPrev');
+  var nextBtn = document.getElementById('heroNext');
+  var SLIDE_MS = 6500;
+  var current = 0, heroTimer = null;
+
+  heroSection.style.setProperty('--slide-ms', SLIDE_MS + 'ms');
 
   slides.forEach(function(_, i){
     var b = document.createElement('button');
@@ -117,11 +126,10 @@
   function goToSlide(index){
     slides[current].classList.remove('active');
     dots[current].classList.remove('active');
-    current = index;
+    current = (index + slides.length) % slides.length;
     slides[current].classList.add('active');
     dots[current].classList.add('active');
     counterEl.textContent = String(current + 1).padStart(2, '0');
-    if (progressTimer) cancelAnimationFrame(progressTimer);
     if (!reduceMotion){
       progressBar.style.transition = 'none';
       progressBar.style.width = '0%';
@@ -131,17 +139,46 @@
       });
     }
   }
-  function nextSlide(){ goToSlide((current + 1) % slides.length); }
+  function nextSlide(){ goToSlide(current + 1); }
+  function prevSlide(){ goToSlide(current - 1); }
   function restartAutoplay(){
     clearInterval(heroTimer);
-    if (!reduceMotion) heroTimer = setInterval(nextSlide, SLIDE_MS);
+    if (!reduceMotion && document.visibilityState === 'visible'){
+      heroTimer = setInterval(nextSlide, SLIDE_MS);
+    }
   }
   goToSlide(0);
   restartAutoplay();
 
-  var heroSection = document.querySelector('.hero');
+  if (prevBtn && nextBtn){
+    prevBtn.addEventListener('click', function(){ prevSlide(); restartAutoplay(); });
+    nextBtn.addEventListener('click', function(){ nextSlide(); restartAutoplay(); });
+  }
+
   heroSection.addEventListener('mouseenter', function(){ clearInterval(heroTimer); });
   heroSection.addEventListener('mouseleave', restartAutoplay);
+
+  /* pause the autoplay while the tab is hidden, resume on return */
+  document.addEventListener('visibilitychange', function(){
+    if (document.visibilityState === 'hidden') clearInterval(heroTimer);
+    else restartAutoplay();
+  });
+
+  /* swipe left/right on the hero to change slides — only acts on a clearly
+     horizontal gesture so vertical page scroll is never intercepted. */
+  var heroTouchX = 0, heroTouchY = 0;
+  heroSection.addEventListener('touchstart', function(e){
+    heroTouchX = e.changedTouches[0].clientX;
+    heroTouchY = e.changedTouches[0].clientY;
+  }, { passive: true });
+  heroSection.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - heroTouchX;
+    var dy = e.changedTouches[0].clientY - heroTouchY;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5){
+      if (dx < 0) nextSlide(); else prevSlide();
+      restartAutoplay();
+    }
+  }, { passive: true });
 
   /* ============ REVEAL ON SCROLL ============ */
   /* will-change is added right before the transition starts and removed
