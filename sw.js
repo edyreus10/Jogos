@@ -1,5 +1,5 @@
-const CACHE = 'brinca-v1';
-const FILES = ['./index.html', './manifest.json'];
+const CACHE = 'onoffice-v1';
+const FILES = ['./index.html', './manifest.json', './css/style.css', './js/main.js'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
   self.skipWaiting();

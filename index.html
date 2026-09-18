@@ -2,542 +2,452 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Brinca!">
-<meta name="theme-color" content="#1a0533">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ONOFFICE — Sindicância &amp; Serviços | Administração Predial</title>
+<meta name="description" content="ONOFFICE — Gestão condominial com estratégia, transparência e excelência. Sindicatura profissional, gestão financeira, operacional e jurídica para condomínios.">
+<meta name="theme-color" content="#082B52">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<title>Brincar & Aprender</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;}
-:root{
-  --bg:#1a0533;
-  --surface:#2a0f4a;
-  --card:#35126080;
-  --border:#6040a0;
-  --purple:#a855f7;
-  --purple-lt:#d8b4fe;
-  --yellow:#fbbf24;
-  --green:#22c55e;
-  --red:#f87171;
-  --blue:#60a5fa;
-  --pink:#f472b6;
-  --orange:#fb923c;
-  --text:#fff;
-  --muted:#c4b5fd;
-  --r:18px;
-  --rs:12px;
-}
-html,body{height:100%;background:#000;}
-body{display:flex;justify-content:center;align-items:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
-#app{background:var(--bg);width:100%;max-width:430px;height:100dvh;display:flex;flex-direction:column;overflow:hidden;}
-
-/* TOPBAR */
-.topbar{display:flex;align-items:center;padding-top:max(env(safe-area-inset-top),14px);padding-bottom:10px;padding-left:16px;padding-right:16px;gap:10px;background:var(--surface);border-bottom:2px solid var(--border);flex-shrink:0;}
-.tb-title{font-size:1.05rem;font-weight:700;color:var(--text);flex:1;}
-.tb-back{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.6rem;padding:0 8px 0 0;line-height:1;}
-.tb-info{background:#3d1870;border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:0.78rem;color:var(--purple-lt);white-space:nowrap;}
-
-/* CONTENT */
-.content{flex:1;overflow-y:auto;padding:14px;-webkit-overflow-scrolling:touch;}
-
-/* NAVBAR */
-.navbar{display:grid;grid-template-columns:repeat(4,1fr);background:var(--surface);border-top:2px solid var(--border);padding:8px 0;padding-bottom:max(env(safe-area-inset-bottom),8px);flex-shrink:0;}
-.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px;}
-.nav-icon{font-size:1.4rem;}
-.nav-lbl{font-size:0.6rem;color:var(--muted);}
-.nav-item.active .nav-lbl{color:var(--yellow);}
-
-/* SCREENS */
-.screen{display:none;}.screen.active{display:block;}
-
-/* HOME */
-.home-hero{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:1.25rem 1rem;margin-bottom:1rem;text-align:center;}
-.hero-icon{font-size:3rem;margin-bottom:6px;}
-.hero-title{font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:4px;}
-.hero-sub{font-size:0.82rem;color:var(--muted);}
-.stars-row{font-size:1.2rem;margin-top:6px;letter-spacing:2px;}
-
-.game-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:1rem;}
-.game-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:1.1rem 0.75rem;cursor:pointer;text-align:center;transition:transform .12s;}
-.game-card:active{transform:scale(0.94);}
-.game-card.sel{border-color:var(--yellow);background:#3d1870;}
-.gc-icon{font-size:2.2rem;margin-bottom:6px;}
-.gc-name{font-size:0.9rem;font-weight:700;color:var(--text);}
-.gc-desc{font-size:0.7rem;color:var(--muted);margin-top:3px;line-height:1.3;}
-
-/* BUTTONS */
-.btn-play{display:block;width:100%;background:var(--purple);color:#fff;border:none;border-radius:var(--r);padding:1.1rem;font-size:1.1rem;font-weight:800;cursor:pointer;margin-bottom:10px;letter-spacing:.3px;}
-.btn-play:active{transform:scale(0.97);}
-.btn-outline{display:block;width:100%;background:transparent;border:2px solid var(--border);border-radius:var(--r);padding:.9rem;font-size:.95rem;color:var(--muted);cursor:pointer;margin-bottom:10px;font-weight:600;}
-.btn-outline:active{transform:scale(0.97);}
-
-/* STATS */
-.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:1rem;}
-.stat-box{background:var(--surface);border:2px solid var(--border);border-radius:var(--rs);padding:.75rem;}
-.stat-lbl{font-size:0.7rem;color:var(--muted);}
-.stat-val{font-size:1.4rem;font-weight:800;color:var(--text);margin-top:2px;}
-
-/* TIMER BAR */
-.tbar-wrap{height:8px;background:var(--surface);border-radius:4px;margin-bottom:1rem;overflow:hidden;border:1px solid var(--border);}
-.tbar{height:100%;border-radius:4px;background:var(--purple);transition:width .1s linear,background .3s;}
-
-/* FEEDBACK */
-.fb{text-align:center;font-size:1.2rem;font-weight:800;min-height:1.8rem;margin-bottom:.5rem;}
-.fb.ok{color:var(--green);}.fb.err{color:var(--red);}
-
-/* PILL */
-.pill{display:inline-block;background:#3d1870;border:1px solid var(--border);color:var(--purple-lt);font-size:.72rem;font-weight:600;padding:4px 12px;border-radius:20px;}
-.pills-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:.75rem;}
-
-/* LEVEL BADGE */
-.lvl-badge{display:inline-block;background:var(--yellow);color:#78350f;font-size:.72rem;font-weight:800;border-radius:20px;padding:4px 12px;margin-bottom:.75rem;}
-
-/* ── CORES ── */
-.prompt-txt{font-size:.95rem;color:var(--muted);margin-bottom:.5rem;text-align:center;}
-.word-lbl{font-size:2rem;font-weight:800;padding:.5rem 1.5rem;border-radius:var(--r);display:inline-block;color:#fff;margin-bottom:.75rem;}
-.colors-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
-.color-btn{height:88px;border-radius:var(--r);border:3px solid transparent;cursor:pointer;transition:transform .1s;font-size:1rem;font-weight:700;color:rgba(0,0,0,.4);}
-.color-btn:active{transform:scale(0.93);}
-
-/* ── FORMAS ── */
-.shapes-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
-.shape-btn{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:1rem .5rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--muted);}
-.shape-btn:active{transform:scale(0.94);}
-
-/* ── CONTAGEM ── */
-.count-area{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:1rem;background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:.85rem;min-height:80px;align-items:center;}
-.count-emoji{font-size:2.2rem;line-height:1;}
-.count-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
-.count-btn{background:var(--surface);border:2px solid var(--border);border-radius:var(--r);padding:1.1rem .5rem;font-size:1.8rem;font-weight:800;cursor:pointer;text-align:center;color:var(--text);}
-.count-btn:active{transform:scale(0.94);}
-
-/* ── MEMÓRIA ── */
-.mem-prompt{font-size:.88rem;color:var(--muted);text-align:center;margin-bottom:.75rem;font-weight:600;}
-.mem-grid{display:grid;gap:8px;justify-content:center;}
-.mc{border-radius:var(--rs);perspective:600px;cursor:pointer;}
-.mc-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .32s;}
-.mc.flipped .mc-inner{transform:rotateY(180deg);}
-.mface{position:absolute;width:100%;height:100%;border-radius:var(--rs);backface-visibility:hidden;display:flex;align-items:center;justify-content:center;}
-.mback{background:var(--purple);font-size:1.4rem;color:#fff;}
-.mfront{background:var(--surface);border:2px solid var(--border);transform:rotateY(180deg);font-size:2rem;}
-.mc.matched .mfront{border:3px solid var(--green);background:#052e16;}
-
-/* RESULTADO */
-.res-center{text-align:center;padding:.5rem 0;}
-.res-icon{font-size:3.5rem;margin-bottom:.75rem;}
-.res-ttl{font-size:1.4rem;font-weight:800;color:var(--text);margin-bottom:4px;}
-.res-sub{font-size:.85rem;color:var(--muted);margin-bottom:1rem;}
-
-/* INSTALL BANNER */
-#install-banner{display:none;background:var(--surface);border-top:2px solid var(--border);padding:10px 16px;flex-shrink:0;text-align:center;}
-#install-banner p{font-size:.8rem;color:var(--muted);margin-bottom:8px;}
-#install-banner button{background:var(--purple);color:#fff;border:none;border-radius:var(--rs);padding:8px 20px;font-size:.85rem;font-weight:700;cursor:pointer;}
-</style>
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="css/style.css">
+<meta property="og:title" content="ONOFFICE — Sindicância & Serviços">
+<meta property="og:description" content="Gestão condominial com estratégia, transparência e excelência.">
+<meta property="og:type" content="website">
 </head>
 <body>
-<div id="app">
 
-  <div class="topbar" id="topbar">
-    <div class="tb-title" id="tb-title">🌟 Brincar & Aprender</div>
-    <div class="tb-info" id="tb-info">⭐ 0</div>
+<!-- ============ HEADER ============ -->
+<header class="site-header" id="siteHeader">
+  <div class="container">
+    <a href="#inicio" class="brand" aria-label="ONOFFICE — Início">
+      <img src="assets/img/logo.webp" alt="ONOFFICE Administração Predial">
+    </a>
+
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a href="#inicio">Início</a>
+      <a href="#empresa">A Empresa</a>
+      <a href="#sindicatura">Sindicatura</a>
+      <a href="#gestao">Nossa Gestão</a>
+      <a href="#experiencia">Experiência</a>
+      <a href="#contato">Contato</a>
+    </nav>
+
+    <div class="header-cta">
+      <a href="#contato" class="btn btn-outline">Fale Conosco</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MOBILE NAV ============ -->
+<nav class="mobile-nav" id="mobileNav" aria-label="Navegação mobile">
+  <a href="#inicio">Início</a>
+  <a href="#empresa">A Empresa</a>
+  <a href="#sindicatura">Sindicatura</a>
+  <a href="#gestao">Nossa Gestão</a>
+  <a href="#experiencia">Experiência</a>
+  <a href="#contato">Contato</a>
+  <a href="#contato" class="btn btn-primary">Fale Conosco</a>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="inicio">
+  <div class="hero-slides" id="heroSlides">
+    <div class="hero-slide hero-slide-1 active"><div class="grain"></div><div class="skyline-motif" aria-hidden="true">SKY1</div></div>
+    <div class="hero-slide hero-slide-2"><div class="grain"></div><div class="skyline-motif" aria-hidden="true">SKY2</div></div>
+    <div class="hero-slide hero-slide-3"><div class="grain"></div><div class="skyline-motif" aria-hidden="true">SKY3</div></div>
+    <div class="hero-slide hero-slide-4"><div class="grain"></div><div class="skyline-motif" aria-hidden="true">SKY4</div></div>
+    <div class="hero-slide hero-slide-5"><div class="grain"></div><div class="skyline-motif" aria-hidden="true">SKY5</div></div>
+    <div class="hero-slide hero-slide-6"><div class="grain"></div><div class="skyline-motif" aria-hidden="true">SKY6</div></div>
+  </div>
+  <div class="hero-overlay"></div>
+
+  <div class="container hero-content hero-anim">
+    <p class="hero-eyebrow">Sindicância &amp; Serviços</p>
+    <h1>Gestão condominial com estratégia,<br>transparência e excelência.</h1>
+    <p class="lead">Uma gestão profissional para preservar patrimônio, valorizar pessoas e proporcionar tranquilidade.</p>
+    <div class="hero-actions">
+      <a href="#gestao" class="btn btn-primary">Conheça nosso trabalho
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a href="#contato" class="btn btn-outline">Fale conosco</a>
+    </div>
   </div>
 
-  <div class="content">
+  <div class="hero-index" aria-hidden="true">
+    <span class="count"><b id="slideCurrent">01</b> / 06</span>
+    <div class="hero-progress"><span id="heroProgressBar"></span></div>
+  </div>
+  <div class="hero-dots" id="heroDots" role="tablist" aria-label="Selecionar slide"></div>
 
-    <!-- HOME -->
-    <div id="s-home" class="screen active">
-      <div class="home-hero">
-        <div class="hero-icon">🧠</div>
-        <div class="hero-title">Brincar & Aprender</div>
-        <div class="hero-sub">Jogos divertidos para aprender brincando!</div>
-        <div class="stars-row" id="star-display">⭐⭐⭐</div>
+  <div class="scroll-cue"><span>Role</span><div class="line"></div></div>
+</section>
+
+<!-- ============ NOSSA HISTÓRIA ============ -->
+<section class="historia" id="empresa">
+  <div class="container historia-grid">
+    <div class="historia-copy">
+      <p class="eyebrow reveal up">A empresa</p>
+      <h2 class="section-title reveal up">Nossa História</h2>
+      <p class="reveal up">Em 2022, um grupo de condôminos enfrentou uma gestão ineficiente, insustentável e carente de ética e comunicação.</p>
+      <p class="reveal up">Dessa experiência nasceu a ONOFFICE: uma administradora construída sobre a certeza de que gerir um condomínio é, antes de tudo, cuidar de pessoas e preservar patrimônio com responsabilidade.</p>
+
+      <div class="timeline">
+        <div class="timeline-track">
+          <div class="tl-step reveal up">
+            <div class="tl-dot">22</div>
+            <span class="year">2022</span>
+            <h4>O início</h4>
+          </div>
+          <div class="tl-step reveal up">
+            <div class="tl-dot">→</div>
+            <span class="year">Fundamento</span>
+            <h4>Eficiência</h4>
+          </div>
+          <div class="tl-step reveal up">
+            <div class="tl-dot">→</div>
+            <span class="year">Fundamento</span>
+            <h4>Transparência</h4>
+          </div>
+          <div class="tl-step reveal up">
+            <div class="tl-dot">→</div>
+            <span class="year">Fundamento</span>
+            <h4>Empatia</h4>
+          </div>
+          <div class="tl-step reveal up">
+            <div class="tl-dot">★</div>
+            <span class="year">Resultado</span>
+            <h4>Excelência</h4>
+          </div>
+        </div>
       </div>
-      <div class="game-grid" id="mode-grid"></div>
-      <button class="btn-play" onclick="startSel()">Jogar agora! 🎮</button>
     </div>
 
-    <!-- GAME -->
-    <div id="s-game" class="screen">
-      <div class="tbar-wrap"><div class="tbar" id="tbar"></div></div>
-      <div class="fb" id="fb"></div>
-      <div id="ga"></div>
+    <div class="historia-visual blue-panel reveal right">
+      <div class="pattern sw-3">
+        <div class="pattern-grid-lines"></div>
+        <div class="pattern-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 21V8l6-4 6 4v13M4 21h16M10 21v-6h4v6M8 11h1M8 14h1M15 11h1M15 14h1"/></svg>
+        </div>
+      </div>
+      <div class="label">Gestão condominial · desde 2022</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MISSÃO ============ -->
+<section class="missao">
+  <div class="container">
+    <div class="section-head center">
+      <p class="eyebrow reveal up">Nossa missão</p>
+      <h2 class="section-title reveal up">Gestão que transforma a experiência<br>de viver em condomínio.</h2>
     </div>
 
-    <!-- RESULT -->
-    <div id="s-result" class="screen">
-      <div class="res-center">
-        <div class="res-icon" id="r-icon">🎉</div>
-        <div class="res-ttl" id="r-ttl">Parabéns!</div>
-        <div class="res-sub" id="r-sub"></div>
-        <div class="stats-row" id="r-stats"></div>
-        <button class="btn-play" id="r-next">Próximo nível! ▶</button>
-        <button class="btn-outline" onclick="goHome()">Voltar ao menu</button>
+    <div class="value-grid stagger">
+      <div class="value-card reveal up">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+        <h4>Eficiência</h4>
+        <p>Processos organizados para uma gestão mais ágil e precisa.</p>
+      </div>
+      <div class="value-card reveal up">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z"/></svg></div>
+        <h4>Transparência</h4>
+        <p>Prestação de contas clara e acessível para todos os condôminos.</p>
+      </div>
+      <div class="value-card reveal up">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 10-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 000-7.8z"/></svg></div>
+        <h4>Empatia</h4>
+        <p>Pessoas no centro de cada decisão e de cada atendimento.</p>
+      </div>
+      <div class="value-card reveal up">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z"/></svg></div>
+        <h4>Comunicação</h4>
+        <p>Canais diretos e constantes entre síndico, gestão e moradores.</p>
+      </div>
+      <div class="value-card reveal up">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 5v5l3 3"/></svg></div>
+        <h4>Sustentabilidade</h4>
+        <p>Planejamento de longo prazo para preservar recursos e patrimônio.</p>
+      </div>
+      <div class="value-card reveal up">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7l8-4z"/></svg></div>
+        <h4>Ética</h4>
+        <p>Conduta íntegra em cada decisão financeira e administrativa.</p>
+      </div>
+      <div class="value-card reveal up">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11z"/></svg></div>
+        <h4>Segurança</h4>
+        <p>Protocolos e conformidade que protegem pessoas e patrimônio.</p>
+      </div>
+      <div class="value-card reveal up">
+        <div class="value-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21c-4-3-7-6-7-10a5 5 0 019-3 5 5 0 019 3c0 4-3 7-7 10z"/></svg></div>
+        <h4>Bem-estar</h4>
+        <p>Ambientes cuidados que valorizam a qualidade de vida de todos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SINDICATURA PROFISSIONAL ============ -->
+<section class="sindicatura" id="sindicatura">
+  <div class="container sind-grid">
+    <div class="sind-copy">
+      <p class="eyebrow reveal up">Sindicatura profissional</p>
+      <h2 class="section-title reveal up">Mais do que administrar.<br>É cuidar, planejar e preservar.</h2>
+      <p class="section-sub reveal up">A sindicatura profissional da ONOFFICE reúne visão jurídica, contábil e operacional para conduzir o condomínio com segurança e planejamento de longo prazo.</p>
+
+      <div class="sind-list stagger">
+        <div class="sind-item reveal up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Gestão financeira</div>
+        <div class="sind-item reveal up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Gestão operacional</div>
+        <div class="sind-item reveal up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Manutenção predial</div>
+        <div class="sind-item reveal up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Segurança</div>
+        <div class="sind-item reveal up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Prestação de contas</div>
+        <div class="sind-item reveal up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Planejamento</div>
+        <div class="sind-item reveal up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Conformidade</div>
+        <div class="sind-item reveal up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Comunicação</div>
       </div>
     </div>
 
+    <div class="sind-visual reveal scale">
+      <div class="zoom-layer pattern sw-6">
+        <div class="pattern-grid-lines"></div>
+        <div class="pattern-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 21h18M5 21V10l4-3 4 3v11M13 21V6l4-3 4 3v15"/></svg>
+        </div>
+      </div>
+      <div class="sind-caption">Planejamento contínuo e conformidade em cada etapa da gestão.</div>
+    </div>
   </div>
+</section>
 
-  <div class="navbar">
-    <div class="nav-item active" onclick="navGo('cores')" id="nav-cores"><div class="nav-icon">🎨</div><div class="nav-lbl">Cores</div></div>
-    <div class="nav-item" onclick="navGo('formas')" id="nav-formas"><div class="nav-icon">🔷</div><div class="nav-lbl">Formas</div></div>
-    <div class="nav-item" onclick="navGo('contagem')" id="nav-contagem"><div class="nav-icon">🔢</div><div class="nav-lbl">Contagem</div></div>
-    <div class="nav-item" onclick="navGo('memoria')" id="nav-memoria"><div class="nav-icon">🃏</div><div class="nav-lbl">Memória</div></div>
+<!-- ============ PILARES ============ -->
+<section class="pilares" id="gestao">
+  <div class="container">
+    <div class="section-head center">
+      <p class="eyebrow reveal up" style="color:rgba(255,255,255,.85)">Nossa gestão</p>
+      <h2 class="section-title reveal up" style="color:#fff">Os pilares de uma gestão eficiente</h2>
+    </div>
+
+    <div class="pilar-grid">
+      <div class="pilar-item reveal up"><div class="pilar-num">01</div><h4>Transparência</h4><p>Informação clara e disponível a qualquer momento para os condôminos.</p></div>
+      <div class="pilar-item reveal up"><div class="pilar-num">02</div><h4>Eficiência</h4><p>Processos otimizados que reduzem custos e evitam desperdícios.</p></div>
+      <div class="pilar-item reveal up"><div class="pilar-num">03</div><h4>Segurança</h4><p>Protocolos consistentes que protegem pessoas e patrimônio.</p></div>
+      <div class="pilar-item reveal up"><div class="pilar-num">04</div><h4>Sustentabilidade</h4><p>Decisões pensadas para o presente e para o futuro do condomínio.</p></div>
+      <div class="pilar-item reveal up"><div class="pilar-num">05</div><h4>Comunicação</h4><p>Diálogo constante entre gestão, síndico e moradores.</p></div>
+      <div class="pilar-item reveal up"><div class="pilar-num">06</div><h4>Valorização do patrimônio</h4><p>Cuidado contínuo que preserva e aumenta o valor do imóvel.</p></div>
+    </div>
   </div>
+</section>
 
-  <div id="install-banner">
-    <p>Instale o app para jogar offline a qualquer hora!</p>
-    <button id="install-btn">Instalar no celular 📲</button>
+<!-- ============ QUEM É A SÍNDICA ============ -->
+<section class="sindica" id="experiencia">
+  <div class="container sindica-grid">
+    <div class="avatar-panel blue-panel reveal left">
+      <div class="pattern sw-9">
+        <div class="avatar-initials">S</div>
+      </div>
+      <div class="avatar-tag">Foto profissional em breve</div>
+    </div>
+
+    <div class="sindica-copy">
+      <p class="eyebrow reveal up">Quem é a síndica</p>
+      <h2 class="section-title reveal up">Experiência que une gestão,<br>estratégia e conhecimento.</h2>
+      <p class="reveal up">Safire é membro da Ordem dos Advogados do Brasil há mais de 12 anos, atuando por mais de 13 anos em ambientes corporativos. Possui Especialização em Direito Tributário pela USP e LLM em Direito Tributário pelo INSPER.</p>
+      <p class="reveal up">Também é Contadora registrada no Conselho Regional de Contabilidade, com mais de 10 anos de experiência, atuando em projetos, atividades, due diligence e diretorias em ambientes corporativos.</p>
+      <p class="reveal up">É especialista em negócios ágeis e inovadores, com formação em metodologias ágeis e experiência com startups e líderes do setor de tecnologia, incluindo experiências relacionadas a Israel e Portugal.</p>
+
+      <div class="badge-grid stagger">
+        <div class="badge reveal up"><div class="num" data-count="12">+12 anos</div><div class="desc">OAB</div></div>
+        <div class="badge reveal up"><div class="num" data-count="13">+13 anos</div><div class="desc">Experiência corporativa</div></div>
+        <div class="badge reveal up"><div class="num" data-count="10">+10 anos</div><div class="desc">Contabilidade</div></div>
+        <div class="badge reveal up"><div class="num">USP</div><div class="desc">Direito Tributário</div></div>
+        <div class="badge reveal up"><div class="num">INSPER</div><div class="desc">LLM</div></div>
+        <div class="badge reveal up"><div class="num">OAB</div><div class="desc">Advocacia registrada</div></div>
+      </div>
+    </div>
   </div>
+</section>
 
+<!-- ============ DIFERENCIAIS ============ -->
+<section class="diferenciais">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow reveal up">Experiência e diferenciais</p>
+      <h2 class="section-title reveal up">Uma gestão preparada para<br>decisões complexas.</h2>
+    </div>
+
+    <div class="dif-grid stagger">
+      <div class="dif-item reveal up"><span class="n">01</span><h4>Visão jurídica</h4></div>
+      <div class="dif-item reveal up"><span class="n">02</span><h4>Visão contábil</h4></div>
+      <div class="dif-item reveal up"><span class="n">03</span><h4>Gestão corporativa</h4></div>
+      <div class="dif-item reveal up"><span class="n">04</span><h4>Planejamento</h4></div>
+      <div class="dif-item reveal up"><span class="n">05</span><h4>Inovação</h4></div>
+      <div class="dif-item reveal up"><span class="n">06</span><h4>Metodologias ágeis</h4></div>
+      <div class="dif-item reveal up"><span class="n">07</span><h4>Gestão estratégica</h4></div>
+      <div class="dif-item reveal up"><span class="n">08</span><h4>Due diligence</h4></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PARCEIROS ============ -->
+<section class="parceiros">
+  <div class="container">
+    <div class="section-head center">
+      <p class="eyebrow reveal up">Parceiros</p>
+      <h2 class="section-title reveal up">Uma rede de profissionais para<br>uma gestão completa.</h2>
+    </div>
+
+    <div class="partner-card reveal up" style="margin:0 auto;">
+      <div class="partner-photo blue-panel">
+        <div class="pattern sw-11"><div class="avatar-initials" style="font-size:2.6rem">C</div></div>
+      </div>
+      <div class="partner-info">
+        <h4>Camila G. Arana</h4>
+        <span class="partner-role">Engenheira Civil</span>
+        <p>Graduada pela Faculdade de Engenharia São Paulo (FESP) e pós-graduada em Estruturas Metálicas pelo INBEC. Mais de 15 anos de experiência em projetos estruturais, estruturas metálicas, obras em concreto armado, reformas, execução e laudos.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALERIA ============ -->
+<section class="galeria">
+  <div class="container">
+    <div class="section-head center">
+      <p class="eyebrow reveal up">Experiência visual</p>
+      <h2 class="section-title reveal up">Áreas que valorizam o dia a dia<br>de quem vive no condomínio.</h2>
+    </div>
+
+    <div class="masonry" id="galleryGrid">
+      <!-- items injected via data below, rendered by JS for lightbox indexing -->
+    </div>
+  </div>
+</section>
+
+<!-- ============ NÚMEROS ============ -->
+<section class="numeros">
+  <div class="container num-grid">
+    <div class="num-item reveal up"><div class="num"><span data-count="2022" data-suffix="">2022</span></div><div class="desc">Ano de fundação</div></div>
+    <div class="num-item reveal up"><div class="num"><span data-count="12" data-suffix="+">0</span></div><div class="desc">Anos de OAB da síndica</div></div>
+    <div class="num-item reveal up"><div class="num"><span data-count="13" data-suffix="+">0</span></div><div class="desc">Anos em ambientes corporativos</div></div>
+    <div class="num-item reveal up"><div class="num"><span data-count="15" data-suffix="+">0</span></div><div class="desc">Anos de engenharia (parceria)</div></div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta">
+  <div class="pattern sw-4"><div class="pattern-grid-lines"></div></div>
+  <div class="cta-overlay"></div>
+  <div class="container cta-content">
+    <h2 class="reveal up">Seu condomínio merece uma gestão profissional.</h2>
+    <p class="reveal up">Conheça uma nova forma de administrar, planejar e cuidar do seu patrimônio.</p>
+    <a href="#contato" class="btn btn-primary reveal up">Fale com a ONOFFICE
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ============ CONTATO ============ -->
+<section class="contato" id="contato">
+  <div class="container contato-grid">
+    <div>
+      <p class="eyebrow reveal up">Contato</p>
+      <h2 class="section-title reveal up">Vamos conversar sobre<br>a gestão do seu condomínio.</h2>
+      <p class="section-sub reveal up">Entre em contato e conheça de perto como a ONOFFICE pode transformar a administração do seu patrimônio.</p>
+
+      <div class="contato-list stagger">
+        <div class="row reveal up">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4.5 8-11a8 8 0 10-16 0c0 6.5 8 11 8 11z"/><circle cx="12" cy="11" r="3"/></svg></div>
+          <div><h5>Endereço</h5><p>Av. dos Bandeirantes, 2.722 — Planalto Paulista, São Paulo/SP</p></div>
+        </div>
+        <div class="row reveal up">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/></svg></div>
+          <div><h5>E-mail</h5><p><a href="mailto:safire.lourenco@on-office.site">safire.lourenco@on-office.site</a></p></div>
+        </div>
+        <div class="row reveal up">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.7a2 2 0 01-.4 2.1L8.1 9.7a16 16 0 006.2 6.2l1.2-1.2a2 2 0 012.1-.4c.9.3 1.8.5 2.7.6a2 2 0 011.7 2z"/></svg></div>
+          <div><h5>WhatsApp</h5><p><a href="https://wa.me/5511993015732" target="_blank" rel="noopener">11 9.9301-5732</a></p></div>
+        </div>
+      </div>
+
+      <a href="https://wa.me/5511993015732" target="_blank" rel="noopener" class="btn btn-solid-blue reveal up" style="margin-top:34px;">
+        Conversar no WhatsApp
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+
+    <div class="map-panel reveal right">
+      <div class="map-badge">ONOFFICE · São Paulo/SP</div>
+      <iframe title="Mapa da localização da ONOFFICE" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=Av.+dos+Bandeirantes,+2722,+Planalto+Paulista,+S%C3%A3o+Paulo+-+SP&output=embed"></iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <video class="footer-logo-video" autoplay muted loop playsinline poster="assets/img/logo.webp" aria-label="Logotipo ONOFFICE animado">
+          <source src="assets/video/logo-loop.mp4" type="video/mp4">
+        </video>
+        <p>Gestão condominial com estratégia, transparência e excelência.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Navegação</h5>
+        <ul>
+          <li><a href="#inicio">Início</a></li>
+          <li><a href="#empresa">A Empresa</a></li>
+          <li><a href="#sindicatura">Sindicatura</a></li>
+          <li><a href="#gestao">Nossa Gestão</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Institucional</h5>
+        <ul>
+          <li><a href="#experiencia">Experiência</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Contato</h5>
+        <ul>
+          <li><a href="mailto:safire.lourenco@on-office.site">safire.lourenco@on-office.site</a></li>
+          <li><a href="https://wa.me/5511993015732" target="_blank" rel="noopener">11 9.9301-5732</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© ONOFFICE — Todos os direitos reservados.</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ WHATSAPP FLOAT ============ -->
+<a href="https://wa.me/5511993015732" target="_blank" rel="noopener" class="wa-float" aria-label="Conversar no WhatsApp">
+  <svg viewBox="0 0 32 32"><path d="M16 3C9 3 3.2 8.8 3.2 15.8c0 2.6.8 5 2.1 7.1L3 29l6.3-2.2c2 1.1 4.3 1.8 6.7 1.8 7 0 12.8-5.8 12.8-12.8S23 3 16 3zm7.4 18.2c-.3.9-1.7 1.7-2.6 1.9-.7.1-1.6.2-4.7-1-4-1.6-6.5-5.6-6.7-5.9-.2-.3-1.6-2.1-1.6-4s1-2.8 1.4-3.2c.3-.3.7-.4 1-.4h.7c.2 0 .5 0 .8.6.3.7 1 2.5 1.1 2.7.1.2.2.4 0 .7-.7 1.4-1.5 1.4-1.1 2.1 1.5 2.6 3 3.5 5.3 4.6.4.2.6.1.8-.1.3-.3 1.1-1.2 1.4-1.6.3-.4.5-.3.9-.2.4.2 2.2 1.1 2.6 1.3.4.2.6.3.7.5.1.2.1 1-.2 1.9z"/></svg>
+</a>
+
+<!-- ============ LIGHTBOX ============ -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
+  <div class="lightbox-inner" id="lightboxInner">
+    <button class="lightbox-close" id="lbClose" aria-label="Fechar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <button class="lightbox-prev" id="lbPrev" aria-label="Anterior">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="lightbox-next" id="lbNext" aria-label="Próximo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+    <div class="lightbox-title" id="lbTitle"></div>
+  </div>
 </div>
-<script>
-/* ── SERVICE WORKER ── */
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {});
-}
 
-/* ── PWA INSTALL ── */
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault(); deferredPrompt = e;
-  document.getElementById('install-banner').style.display = 'block';
-});
-document.getElementById('install-btn').addEventListener('click', () => {
-  if (!deferredPrompt) return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(() => { deferredPrompt = null; document.getElementById('install-banner').style.display = 'none'; });
-});
-window.addEventListener('appinstalled', () => { document.getElementById('install-banner').style.display = 'none'; });
-
-/* ── DATA ── */
-const MODES = [
-  { id: 'cores',    name: 'Cores',    icon: '🎨', desc: 'Identifique as cores certas' },
-  { id: 'formas',   name: 'Formas',   icon: '🔷', desc: 'Encontre a forma pedida' },
-  { id: 'contagem', name: 'Contagem', icon: '🔢', desc: 'Conte os objetos' },
-  { id: 'memoria',  name: 'Memória',  icon: '🃏', desc: 'Encontre os pares iguais' },
-];
-
-const CORES = [
-  { name: 'Vermelho', hex: '#ef4444' },
-  { name: 'Azul',     hex: '#3b82f6' },
-  { name: 'Verde',    hex: '#22c55e' },
-  { name: 'Amarelo',  hex: '#eab308' },
-  { name: 'Roxo',     hex: '#a855f7' },
-  { name: 'Rosa',     hex: '#ec4899' },
-  { name: 'Laranja',  hex: '#f97316' },
-  { name: 'Marrom',   hex: '#92400e' },
-];
-
-const FORMAS = [
-  { name: 'Círculo',   svg: '<circle cx="36" cy="36" r="30" fill="currentColor"/>' },
-  { name: 'Quadrado',  svg: '<rect x="5" y="5" width="62" height="62" rx="4" fill="currentColor"/>' },
-  { name: 'Triângulo', svg: '<polygon points="36,3 69,69 3,69" fill="currentColor"/>' },
-  { name: 'Estrela',   svg: '<polygon points="36,3 43,27 69,27 49,43 57,67 36,52 15,67 23,43 3,27 29,27" fill="currentColor"/>' },
-  { name: 'Coração',   svg: '<path d="M36 62 C36 62 8 44 8 24 C8 14 18 8 28 14 C32 17 36 22 36 22 C36 22 40 17 44 14 C54 8 64 14 64 24 C64 44 36 62 36 62Z" fill="currentColor"/>' },
-  { name: 'Diamante',  svg: '<polygon points="36,4 68,36 36,68 4,36" fill="currentColor"/>' },
-];
-
-const EMOJIS = ['🐶','🐱','🐸','🦊','🐼','🐨','🦁','🐯','🐻','🦋','🌸','⭐','🍎','🍌','🍕','🚗','🏠','🌈','🎈','🎀'];
-const MEM_EMOJIS = ['🐶','🐱','🐸','🦊','🐼','🐨','🦁','🐯','🐻','🦋','🌸','⭐','🍎','🍌','🍕','🚀','🌈','🎈','🎀','🎯','🍦','🦄','🐠','🌻','🍉'];
-const SHAPE_COLORS = ['#a855f7','#22c55e','#f97316','#eab308','#ec4899','#3b82f6'];
-
-/* ── HELPERS ── */
-function shuf(a) { return [...a].sort(() => Math.random() - .5); }
-function rnd(a)  { return a[Math.floor(Math.random() * a.length)]; }
-function $i(id)  { return document.getElementById(id); }
-
-/* ── STATE ── */
-let selMode = 'cores', st = {}, totalPts = parseInt(localStorage.getItem('brinca_pts') || '0'),
-    totalNivel = parseInt(localStorage.getItem('brinca_nivel') || '0'), tmr = null;
-
-function savePts() { localStorage.setItem('brinca_pts', totalPts); localStorage.setItem('brinca_nivel', totalNivel); }
-function addPts(n) { totalPts += n; savePts(); $i('tb-info').textContent = '⭐ ' + totalPts; }
-function getStars() {
-  if (totalPts >= 500) return '🌟🌟🌟🌟🌟';
-  if (totalPts >= 200) return '⭐⭐⭐⭐';
-  if (totalPts >= 50)  return '⭐⭐⭐';
-  if (totalPts >= 10)  return '⭐⭐';
-  return '⭐';
-}
-$i('tb-info').textContent = '⭐ ' + totalPts;
-
-/* ── SCREENS ── */
-function showScreen(s) { document.querySelectorAll('.screen').forEach(x => x.classList.remove('active')); $i(s).classList.add('active'); }
-function setTopbar(title, back) {
-  $i('tb-title').innerHTML = back ? `<button class="tb-back" onclick="goHome()">‹</button>${title}` : title;
-}
-function goHome() {
-  clearTmr(); showScreen('s-home'); setTopbar('🌟 Brincar & Aprender', false);
-  if ($i('star-display')) $i('star-display').textContent = getStars();
-  renderModes();
-}
-function navGo(mode) {
-  selMode = mode;
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  $i('nav-' + mode).classList.add('active');
-  goHome(); startSel();
-}
-function renderModes() {
-  $i('mode-grid').innerHTML = MODES.map(m =>
-    `<div class="game-card${m.id === selMode ? ' sel' : ''}" onclick="selM('${m.id}')">
-      <div class="gc-icon">${m.icon}</div>
-      <div class="gc-name">${m.name}</div>
-      <div class="gc-desc">${m.desc}</div>
-    </div>`).join('');
-}
-function selM(id) {
-  selMode = id; renderModes();
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  $i('nav-' + id).classList.add('active');
-}
-renderModes();
-function startSel() {
-  showScreen('s-game');
-  if (selMode === 'cores')    initCores();
-  else if (selMode === 'formas')   initFormas();
-  else if (selMode === 'contagem') initContagem();
-  else                             initMemoria();
-}
-
-/* ── TIMER ── */
-function clearTmr() { if (tmr) { clearInterval(tmr); tmr = null; } }
-function startTmr(secs, onEnd) {
-  clearTmr();
-  const bar = $i('tbar'); let rem = secs;
-  bar.style.width = '100%'; bar.style.background = '#a855f7';
-  tmr = setInterval(() => {
-    rem -= .1; const p = Math.max(0, rem / secs * 100);
-    bar.style.width = p + '%';
-    bar.style.background = p > 40 ? '#a855f7' : p > 20 ? '#f97316' : '#ef4444';
-    if (rem <= 0) { clearTmr(); onEnd(); }
-  }, 100);
-}
-function setFB(msg, cls) {
-  const e = $i('fb'); e.textContent = msg; e.className = 'fb ' + (cls || '');
-  if (cls) setTimeout(() => { e.textContent = ''; e.className = 'fb'; }, 900);
-}
-function disGA() { $i('ga').querySelectorAll('button,.mc').forEach(b => b.style.pointerEvents = 'none'); }
-
-/* ── PROGRESSION ── */
-function onCerto(extra) {
-  const pts = 10 * (st.nivel || 1);
-  addPts(pts); totalNivel++; savePts();
-  setFB('✅ Muito bem! +' + pts, 'ok');
-  st.qInNivel = (st.qInNivel || 0) + 1;
-  st.acertos  = (st.acertos  || 0) + 1;
-  const maxQ = 3 + Math.floor((st.nivel || 1) / 3);
-  const go = () => {
-    if (st.qInNivel >= maxQ) showResult(true);
-    else loadQ();
-  };
-  if (extra) go(); else setTimeout(go, 900);
-}
-function onErro() {
-  st.vidas--;
-  $i('tb-info').textContent = '❤️'.repeat(Math.max(0, st.vidas)) + (st.vidas < 3 ? ' ⭐' + totalPts : '');
-  st.qInNivel = (st.qInNivel || 0) + 1;
-  const maxQ = 3 + Math.floor((st.nivel || 1) / 3);
-  if (st.vidas <= 0) {
-    setFB('💔 Vamos tentar de novo!', 'err');
-    setTimeout(() => showResult(false), 900);
-  } else {
-    setFB('❌ Quase! Tente de novo!', 'err');
-    if (st.qInNivel >= maxQ) setTimeout(() => showResult(false), 900);
-    else setTimeout(loadQ, 1000);
-  }
-}
-function loadQ() {
-  setFB('');
-  if (selMode === 'cores')    loadCores();
-  else if (selMode === 'formas')   loadFormas();
-  else if (selMode === 'contagem') loadContagem();
-}
-
-function showResult(ganhou) {
-  clearTmr();
-  $i('r-icon').textContent = ganhou ? '🎉' : '😊';
-  $i('r-ttl').textContent  = ganhou ? 'Arrasou!' : 'Boa tentativa!';
-  $i('r-sub').textContent  = ganhou
-    ? 'Você completou o nível ' + st.nivel + '! Continue assim!'
-    : 'Você está melhorando! Tente de novo!';
-  $i('r-stats').innerHTML  =
-    `<div class="stat-box"><div class="stat-lbl">Pontuação</div><div class="stat-val">${totalPts}</div></div>
-     <div class="stat-box"><div class="stat-lbl">Nível</div><div class="stat-val">${st.nivel}</div></div>
-     <div class="stat-box"><div class="stat-lbl">Acertos</div><div class="stat-val">${st.acertos || 0}</div></div>
-     <div class="stat-box"><div class="stat-lbl">Estrelas</div><div class="stat-val">${getStars()}</div></div>`;
-  const nextFn = ganhou
-    ? () => {
-        const oldNivel = st.nivel;
-        st = { modo: selMode, nivel: oldNivel + 1, vidas: 3, qInNivel: 0, acertos: 0 };
-        showScreen('s-game'); updateTopbarGame(); loadQ();
-      }
-    : () => {
-        st.vidas = 3; st.qInNivel = 0; st.acertos = 0;
-        showScreen('s-game'); updateTopbarGame(); loadQ();
-      };
-  $i('r-next').onclick = nextFn;
-  $i('r-next').textContent = ganhou ? 'Próximo nível! ▶' : 'Tentar de novo! ▶';
-  showScreen('s-result');
-}
-function updateTopbarGame() {
-  $i('tb-info').textContent = '❤️'.repeat(st.vidas) + ' ⭐' + totalPts;
-}
-
-/* ═══════ CORES ═══════ */
-function initCores() {
-  st = { modo: 'cores', nivel: (st.nivel || 1), vidas: 3, qInNivel: 0, acertos: 0 };
-  setTopbar('🎨 Cores', true); updateTopbarGame();
-  loadCores();
-}
-function loadCores() {
-  const lvl = st.nivel;
-  const pool = CORES.slice(0, Math.min(4 + Math.floor(lvl / 2), CORES.length));
-  const cor  = rnd(pool);
-  let opts   = shuf(pool).slice(0, Math.min(4 + Math.floor(lvl / 3), pool.length));
-  if (!opts.find(o => o.name === cor.name)) opts[0] = cor;
-  opts = shuf(opts);
-  const t = Math.max(5, 14 - lvl);
-  $i('ga').innerHTML =
-    `<div style="text-align:center;margin-bottom:.75rem">
-       <div class="lvl-badge">✨ Nível ${lvl}</div>
-       <div class="prompt-txt">Toque na cor:</div>
-       <div class="word-lbl" style="background:${cor.hex}">${cor.name}</div>
-     </div>
-     <div class="colors-grid">
-       ${opts.map(c =>
-         `<button class="color-btn" style="background:${c.hex}" onclick="ansCor('${c.name}','${cor.name}')" aria-label="${c.name}"></button>`
-       ).join('')}
-     </div>`;
-  startTmr(t, () => ansCor('__t__', cor.name));
-}
-function ansCor(ch, cor) { clearTmr(); disGA(); ch === cor ? onCerto() : onErro(); }
-
-/* ═══════ FORMAS ═══════ */
-function initFormas() {
-  st = { modo: 'formas', nivel: (st.nivel || 1), vidas: 3, qInNivel: 0, acertos: 0 };
-  setTopbar('🔷 Formas', true); updateTopbarGame();
-  loadFormas();
-}
-function loadFormas() {
-  const lvl  = st.nivel;
-  const pool = FORMAS.slice(0, Math.min(3 + Math.floor(lvl / 2), FORMAS.length));
-  const cor  = rnd(pool);
-  let opts   = shuf(pool).slice(0, Math.min(3 + Math.floor(lvl / 2), pool.length));
-  if (!opts.find(o => o.name === cor.name)) opts[0] = cor;
-  opts = shuf(opts);
-  const col = rnd(SHAPE_COLORS);
-  const t   = Math.max(5, 14 - lvl);
-  $i('ga').innerHTML =
-    `<div style="text-align:center;margin-bottom:.75rem">
-       <div class="lvl-badge">✨ Nível ${lvl}</div>
-       <div class="prompt-txt">Encontre o:</div>
-       <svg width="82" height="82" viewBox="0 0 72 72" style="color:${col};display:block;margin:0 auto 4px">${cor.svg}</svg>
-       <div style="font-size:.85rem;color:var(--muted);font-weight:700">${cor.name}</div>
-     </div>
-     <div class="shapes-grid">
-       ${opts.map((s, i) =>
-         `<button class="shape-btn" onclick="ansForma('${s.name}','${cor.name}')">
-           <svg width="52" height="52" viewBox="0 0 72 72" style="color:${SHAPE_COLORS[i % SHAPE_COLORS.length]}">${s.svg}</svg>
-           <span>${s.name}</span>
-         </button>`
-       ).join('')}
-     </div>`;
-  startTmr(t, () => ansForma('__t__', cor.name));
-}
-function ansForma(ch, cor) { clearTmr(); disGA(); ch === cor ? onCerto() : onErro(); }
-
-/* ═══════ CONTAGEM ═══════ */
-function initContagem() {
-  st = { modo: 'contagem', nivel: (st.nivel || 1), vidas: 3, qInNivel: 0, acertos: 0 };
-  setTopbar('🔢 Contagem', true); updateTopbarGame();
-  loadContagem();
-}
-function loadContagem() {
-  const lvl = st.nivel;
-  const max = Math.min(3 + lvl, 15);
-  const cnt = Math.floor(Math.random() * max) + 1;
-  const em  = rnd(EMOJIS);
-  const wrongs = new Set();
-  while (wrongs.size < 3) {
-    const w = Math.floor(Math.random() * Math.max(max + 2, 5)) + 1;
-    if (w !== cnt) wrongs.add(w);
-  }
-  const opts = shuf([cnt, ...wrongs]);
-  const t    = Math.max(6, 18 - lvl);
-  $i('ga').innerHTML =
-    `<div style="text-align:center;margin-bottom:.5rem">
-       <div class="lvl-badge">✨ Nível ${lvl}</div>
-       <div class="prompt-txt">Quantos tem aqui?</div>
-     </div>
-     <div class="count-area">${Array(cnt).fill(`<span class="count-emoji">${em}</span>`).join('')}</div>
-     <div class="count-grid">${opts.map(n => `<button class="count-btn" onclick="ansCnt(${n},${cnt})">${n}</button>`).join('')}</div>`;
-  startTmr(t, () => ansCnt(-1, cnt));
-}
-function ansCnt(ch, cor) { clearTmr(); disGA(); ch === cor ? onCerto() : onErro(); }
-
-/* ═══════ MEMÓRIA ═══════ */
-let ms = {};
-function initMemoria() {
-  st = { modo: 'memoria', nivel: (st.nivel || 1), vidas: 3, qInNivel: 0, acertos: 0 };
-  setTopbar('🃏 Memória', true); updateTopbarGame();
-  loadMemoria();
-}
-function loadMemoria() {
-  const lvl   = st.nivel;
-  const pairs = Math.min(2 + Math.floor(lvl / 2), 6);
-  const picked = shuf(MEM_EMOJIS).slice(0, pairs);
-  const cards  = shuf([...picked, ...picked].map((e, i) => ({ id: i, emoji: e, matched: false, flipped: false })));
-  ms = { cards, flipped: [], matched: 0, total: pairs, locked: false };
-  clearTmr(); $i('tbar').style.width = '100%'; $i('tbar').style.background = '#a855f7';
-  renderMem();
-}
-function renderMem() {
-  const { cards, matched, total } = ms;
-  const cols = 4, sz = Math.max(60, 80 - total * 3);
-  $i('ga').innerHTML =
-    `<div style="text-align:center;margin-bottom:.5rem">
-       <div class="lvl-badge">✨ Nível ${st.nivel}</div>
-       <div class="mem-prompt">Encontre os pares! (${matched}/${total})</div>
-     </div>
-     <div class="mem-grid" style="grid-template-columns:repeat(${cols},${sz}px)">
-       ${cards.map((c, i) =>
-         `<div class="mc${c.flipped ? ' flipped' : ''}${c.matched ? ' matched' : ''}"
-               style="width:${sz}px;height:${sz}px" onclick="flipMem(${i})"
-               role="button" aria-label="${c.matched || c.flipped ? c.emoji : 'carta'}">
-           <div class="mc-inner">
-             <div class="mface mback">?</div>
-             <div class="mface mfront">${c.emoji}</div>
-           </div>
-         </div>`
-       ).join('')}
-     </div>`;
-}
-function flipMem(i) {
-  if (ms.locked) return;
-  const c = ms.cards[i];
-  if (c.flipped || c.matched) return;
-  c.flipped = true; ms.flipped.push(i); renderMem();
-  if (ms.flipped.length === 2) {
-    ms.locked = true;
-    const [a, b] = ms.flipped;
-    if (ms.cards[a].emoji === ms.cards[b].emoji) {
-      ms.cards[a].matched = true; ms.cards[b].matched = true; ms.matched++;
-      ms.flipped = []; ms.locked = false; renderMem();
-      if (ms.matched >= ms.total) {
-        setFB('🎉 Todos os pares!', 'ok');
-        setTimeout(() => onCerto(true), 700);
-      }
-    } else {
-      setTimeout(() => {
-        ms.cards[a].flipped = false; ms.cards[b].flipped = false;
-        ms.flipped = []; ms.locked = false; renderMem();
-      }, 900);
-    }
-  }
-}
-</script>
+<script src="js/main.js"></script>
 </body>
 </html>
