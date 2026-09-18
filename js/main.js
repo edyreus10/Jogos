@@ -16,12 +16,37 @@
   document.querySelectorAll('.skyline-motif').forEach(function(el){ el.innerHTML = SKYLINE_SVG; });
 
   /* ============ HEADER SCROLL STATE ============ */
+  /* Scroll listener only records state; the actual class toggle (and any
+     future scroll-linked reads/writes) happen once per frame inside a
+     single shared requestAnimationFrame loop, never per scroll event. */
   var header = document.getElementById('siteHeader');
-  function onScroll(){
-    if (window.scrollY > 40) header.classList.add('scrolled');
-    else header.classList.remove('scrolled');
+  var scrollTicking = false;
+  var lastScrollY = window.scrollY;
+
+  var parallaxEls = Array.prototype.slice.call(document.querySelectorAll('.parallax-el'));
+  var enableParallax = !reduceMotion && window.innerWidth > 768 && parallaxEls.length;
+
+  function onScrollFrame(){
+    header.classList.toggle('scrolled', lastScrollY > 40);
+    if (enableParallax){
+      parallaxEls.forEach(function(el){
+        var speed = parseFloat(el.dataset.parallax) || 0.06;
+        var rect = el.getBoundingClientRect();
+        var center = rect.top + rect.height / 2 - window.innerHeight / 2;
+        var offset = Math.max(-40, Math.min(40, -center * speed));
+        el.style.transform = 'translate3d(0,' + offset.toFixed(1) + 'px,0)';
+      });
+    }
+    scrollTicking = false;
   }
-  onScroll();
+  function onScroll(){
+    lastScrollY = window.scrollY;
+    if (!scrollTicking){
+      scrollTicking = true;
+      requestAnimationFrame(onScrollFrame);
+    }
+  }
+  onScrollFrame();
   window.addEventListener('scroll', onScroll, { passive: true });
 
   /* ============ MOBILE NAV ============ */
@@ -89,12 +114,24 @@
   heroSection.addEventListener('mouseleave', restartAutoplay);
 
   /* ============ REVEAL ON SCROLL ============ */
+  /* will-change is added right before the transition starts and removed
+     as soon as it ends, instead of sitting on every .reveal element for
+     the whole page lifetime (which forces a permanent compositor layer
+     per element and is the main cause of scroll jank on long pages). */
+  function animateReveal(el){
+    el.classList.add('animating');
+    el.classList.add('in');
+    el.addEventListener('transitionend', function handler(){
+      el.classList.remove('animating');
+      el.removeEventListener('transitionend', handler);
+    }, { once: true });
+  }
   var revealEls = document.querySelectorAll('.reveal');
   if ('IntersectionObserver' in window && !reduceMotion){
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(entry){
         if (entry.isIntersecting){
-          entry.target.classList.add('in');
+          animateReveal(entry.target);
           io.unobserve(entry.target);
         }
       });
@@ -103,6 +140,29 @@
   } else {
     revealEls.forEach(function(el){ el.classList.add('in'); });
   }
+
+  /* ============ SMOOTH ANCHOR NAVIGATION ============ */
+  /* Native smooth scrolling (html{scroll-behavior:smooth} + scroll-margin-top
+     on sections) already gives a light, GPU-friendly glide — no custom
+     scroll-hijacking loop needed. On top of that we add a brief, cheap
+     "arrival" flourish on the destination section content so intentional
+     menu navigation feels like a deliberate slide, without touching the
+     browser's native wheel/scroll behaviour at all. */
+  document.querySelectorAll('a[href^="#"]').forEach(function(link){
+    link.addEventListener('click', function(e){
+      var id = link.getAttribute('href');
+      if (!id || id === '#') return;
+      var target = document.querySelector(id);
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      if (!reduceMotion){
+        target.classList.add('section-arrive');
+        setTimeout(function(){ target.classList.remove('section-arrive'); }, 650);
+      }
+      if (history.replaceState) history.replaceState(null, '', id);
+    });
+  });
 
   /* ============ COUNTERS ============ */
   var counters = document.querySelectorAll('[data-count]');
