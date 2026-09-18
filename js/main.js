@@ -152,7 +152,7 @@
     { title: 'Bicicletário', swatch: 'sw-9', icon: '<circle cx="6" cy="17" r="3"/><circle cx="18" cy="17" r="3"/><path d="M6 17l4-9h4l4 9M9 8h4"/>' },
     { title: 'Espaço gourmet', swatch: 'sw-10', big: true, icon: '<path d="M6 3v8a3 3 0 003 3v7M6 3v6M9 3v6M18 3c-2 1-2 3-2 5s2 3 2 3v10"/>' },
     { title: 'Academia', swatch: 'sw-11', icon: '<path d="M4 8v8M20 8v8M4 12h2M18 12h2M8 6v12M16 6v12"/>' },
-    { title: 'Áreas comuns', swatch: 'sw-12', icon: '<path d="M3 12l9-8 9 8M5 10v10h14V10"/>' }
+    { title: 'Áreas de convivência', swatch: 'sw-12', icon: '<path d="M3 12l9-8 9 8M5 10v10h14V10"/>' }
   ];
 
   var grid = document.getElementById('galleryGrid');
@@ -169,10 +169,40 @@
         '<div class="pattern-grid-lines"></div>' +
         '<div class="pattern-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">' + item.icon + '</svg></div>' +
       '</div>' +
-      '<div class="g-overlay"><span>' + item.title + '</span></div>';
+      '<div class="g-overlay"><span>' + item.title + '</span>' +
+        '<span class="g-expand" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3M16 3h3a2 2 0 012 2v3M8 21H5a2 2 0 01-2-2v-3M16 21h3a2 2 0 002-2v-3"/></svg></span>' +
+      '</div>';
     frag.appendChild(el);
   });
   grid.appendChild(frag);
+
+  /* mobile carousel dots */
+  var galleryDots = document.getElementById('galleryDots');
+  if (galleryDots){
+    GALLERY.forEach(function(_, i){
+      var d = document.createElement('span');
+      if (i === 0) d.classList.add('active');
+      galleryDots.appendChild(d);
+    });
+    var dotEls = Array.prototype.slice.call(galleryDots.children);
+    var scrollTicking = false;
+    grid.addEventListener('scroll', function(){
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(function(){
+        var items = grid.querySelectorAll('.g-item');
+        var center = grid.scrollLeft + grid.clientWidth / 2;
+        var closest = 0, closestDist = Infinity;
+        items.forEach(function(it, i){
+          var mid = it.offsetLeft + it.offsetWidth / 2;
+          var dist = Math.abs(mid - center);
+          if (dist < closestDist){ closestDist = dist; closest = i; }
+        });
+        dotEls.forEach(function(d, i){ d.classList.toggle('active', i === closest); });
+        scrollTicking = false;
+      });
+    }, { passive: true });
+  }
 
   if ('IntersectionObserver' in window && !reduceMotion){
     var gIo = new IntersectionObserver(function(entries){
@@ -240,6 +270,20 @@
     if (e.key === 'ArrowRight') lbNextFn();
     if (e.key === 'ArrowLeft') lbPrevFn();
   });
+
+  /* touch swipe navigation inside the lightbox */
+  var touchStartX = 0, touchStartY = 0;
+  lbInner.addEventListener('touchstart', function(e){
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+  }, { passive: true });
+  lbInner.addEventListener('touchend', function(e){
+    var dx = e.changedTouches[0].clientX - touchStartX;
+    var dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)){
+      if (dx < 0) lbNextFn(); else lbPrevFn();
+    }
+  }, { passive: true });
 
   /* ============ SERVICE WORKER ============ */
   if ('serviceWorker' in navigator){

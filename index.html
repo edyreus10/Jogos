@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ONOFFICE — Sindicância &amp; Serviços | Administração Predial</title>
 <meta name="description" content="ONOFFICE — Gestão condominial com estratégia, transparência e excelência. Sindicatura profissional, gestão financeira, operacional e jurídica para condomínios.">
-<meta name="theme-color" content="#082B52">
+<meta name="theme-color" content="#0A2C61">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
@@ -314,16 +314,18 @@
 </section>
 
 <!-- ============ GALERIA ============ -->
-<section class="galeria">
+<section class="galeria" id="galeria">
   <div class="container">
     <div class="section-head center">
       <p class="eyebrow reveal up">Experiência visual</p>
-      <h2 class="section-title reveal up">Áreas que valorizam o dia a dia<br>de quem vive no condomínio.</h2>
+      <h2 class="section-title reveal up">Espaços que fazem parte<br>da experiência.</h2>
+      <p class="section-sub reveal up">Ambientes planejados para proporcionar conforto, convivência e qualidade de vida. <em>Imagens institucionais ilustrativas — serão substituídas por fotografias reais da ONOFFICE.</em></p>
     </div>
 
     <div class="masonry" id="galleryGrid">
-      <!-- items injected via data below, rendered by JS for lightbox indexing -->
+      <!-- items injected via JS (js/main.js — array GALLERY) for lightbox indexing -->
     </div>
+    <div class="gallery-dots" id="galleryDots" aria-hidden="true"></div>
   </div>
 </section>
 
@@ -435,17 +437,17 @@
 <!-- ============ LIGHTBOX ============ -->
 <div class="lightbox" id="lightbox" aria-hidden="true">
   <div class="lightbox-inner" id="lightboxInner">
-    <button class="lightbox-close" id="lbClose" aria-label="Fechar">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-    <button class="lightbox-prev" id="lbPrev" aria-label="Anterior">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-    </button>
-    <button class="lightbox-next" id="lbNext" aria-label="Próximo">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-    </button>
     <div class="lightbox-title" id="lbTitle"></div>
   </div>
+  <button class="lightbox-close" id="lbClose" aria-label="Fechar">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <button class="lightbox-prev" id="lbPrev" aria-label="Anterior">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+  </button>
+  <button class="lightbox-next" id="lbNext" aria-label="Próximo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+  </button>
 </div>
 
 <script src="js/main.js"></script>
