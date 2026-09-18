@@ -26,8 +26,38 @@
   var parallaxEls = Array.prototype.slice.call(document.querySelectorAll('.parallax-el'));
   var enableParallax = !reduceMotion && window.innerWidth > 768 && parallaxEls.length;
 
+  /* scrollspy: highlight the menu link for the section currently in view.
+     Section tops are cached and only recomputed on resize, so the scroll
+     frame itself just does cheap comparisons, no layout reads. */
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.main-nav a[href^="#"]'));
+  var navSections = [];
+  var activeNavLink = null;
+  function measureNavSections(){
+    navSections = navLinks.map(function(link){
+      var target = document.querySelector(link.getAttribute('href'));
+      return target ? { link: link, top: target.offsetTop } : null;
+    }).filter(Boolean);
+  }
+  function updateActiveNav(){
+    if (!navSections.length) return;
+    var y = lastScrollY + header.offsetHeight + 30;
+    var current = navSections[0];
+    for (var i = 0; i < navSections.length; i++){
+      if (y >= navSections[i].top) current = navSections[i];
+    }
+    if (current.link !== activeNavLink){
+      if (activeNavLink) activeNavLink.classList.remove('active');
+      current.link.classList.add('active');
+      activeNavLink = current.link;
+    }
+  }
+  measureNavSections();
+  window.addEventListener('load', measureNavSections);
+  window.addEventListener('resize', measureNavSections);
+
   function onScrollFrame(){
     header.classList.toggle('scrolled', lastScrollY > 40);
+    updateActiveNav();
     if (enableParallax){
       parallaxEls.forEach(function(el){
         var speed = parseFloat(el.dataset.parallax) || 0.06;

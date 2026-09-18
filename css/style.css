@@ -75,6 +75,12 @@ h1,h2,h3,h4{font-family:var(--ff-title);color:var(--blue-dark);line-height:1.15;
 .section-head{margin-bottom:clamp(40px,6vw,72px);}
 .section-head.center{text-align:center;margin-left:auto;margin-right:auto;}
 .section-head.center .section-sub{margin-left:auto;margin-right:auto;}
+/* cascading entrance within a section head: eyebrow → title → subtitle */
+.section-head .eyebrow.reveal{transition-delay:0ms;}
+.section-head .section-title.reveal{transition-delay:90ms;}
+.section-head .section-sub.reveal{transition-delay:160ms;}
+/* the main visual/image of a section arrives slightly after its head */
+.blue-panel.reveal,.sind-visual.reveal,.avatar-panel.reveal,.map-panel.reveal,.partner-photo.reveal{transition-delay:180ms;}
 
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important;}
@@ -84,7 +90,7 @@ h1,h2,h3,h4{font-family:var(--ff-title);color:var(--blue-dark);line-height:1.15;
 /* transform+opacity only by default (GPU-friendly, no layout reflow).
    will-change is toggled by JS just for the duration of the transition
    instead of sitting on every element permanently. */
-.reveal{opacity:0;transition:opacity var(--dur) var(--ease-entrance),transform var(--dur) var(--ease-entrance);}
+.reveal{opacity:0;transition:opacity var(--dur) var(--ease-entrance),transform var(--dur) var(--ease-entrance);transition-delay:var(--card-delay,0s);}
 .reveal.up{transform:translateY(28px);}
 .reveal.left{transform:translateX(-36px);}
 .reveal.right{transform:translateX(36px);}
@@ -104,14 +110,38 @@ h1,h2,h3,h4{font-family:var(--ff-title);color:var(--blue-dark);line-height:1.15;
 /* discreet scroll parallax — updated from a single shared rAF loop, never
    per-pixel; disabled on mobile/reduced-motion in JS. */
 .parallax-el{will-change:transform;}
-.stagger .reveal:nth-child(1){transition-delay:0s;}
-.stagger .reveal:nth-child(2){transition-delay:.1s;}
-.stagger .reveal:nth-child(3){transition-delay:.2s;}
-.stagger .reveal:nth-child(4){transition-delay:.3s;}
-.stagger .reveal:nth-child(5){transition-delay:.4s;}
-.stagger .reveal:nth-child(6){transition-delay:.5s;}
-.stagger .reveal:nth-child(7){transition-delay:.6s;}
-.stagger .reveal:nth-child(8){transition-delay:.7s;}
+
+/* ultra-subtle decorative drift — transform-only, one or two elements at
+   most, near-imperceptible amplitude. Frozen by the reduced-motion rule
+   above, and skipped on small screens to keep mobile perfectly cheap. */
+@keyframes driftSlow{
+  0%,100%{transform:translate3d(0,0,0);}
+  50%{transform:translate3d(10px,-14px,0);}
+}
+@media(min-width:769px){
+  .hero::before{
+    content:'';position:absolute;top:8%;right:6%;width:340px;height:340px;
+    border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.06),transparent 70%);
+    pointer-events:none;z-index:1;animation:driftSlow 16s ease-in-out infinite;
+  }
+  .cta::before{
+    content:'';position:absolute;bottom:-10%;left:8%;width:280px;height:280px;
+    border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.05),transparent 70%);
+    pointer-events:none;z-index:1;animation:driftSlow 20s ease-in-out infinite reverse;
+  }
+}
+/* cards start ~150ms after the section head, then stagger individually.
+   --card-delay is a custom property so descendants (icon/title/text of
+   each card) can read the same base value via calc() and layer their own
+   small extra offset on top of it — see value-card/pilar-item below. */
+.stagger .reveal:nth-child(1){--card-delay:.15s;}
+.stagger .reveal:nth-child(2){--card-delay:.24s;}
+.stagger .reveal:nth-child(3){--card-delay:.33s;}
+.stagger .reveal:nth-child(4){--card-delay:.42s;}
+.stagger .reveal:nth-child(5){--card-delay:.51s;}
+.stagger .reveal:nth-child(6){--card-delay:.6s;}
+.stagger .reveal:nth-child(7){--card-delay:.69s;}
+.stagger .reveal:nth-child(8){--card-delay:.78s;}
 
 /* ============ HEADER ============ */
 .site-header{
@@ -138,7 +168,7 @@ h1,h2,h3,h4{font-family:var(--ff-title);color:var(--blue-dark);line-height:1.15;
   content:'';position:absolute;left:0;bottom:0;width:0;height:2px;
   background:var(--white);border-radius:2px;transition:width .35s var(--ease);
 }
-.main-nav a:hover::after,.main-nav a:focus-visible::after{width:100%;}
+.main-nav a:hover::after,.main-nav a:focus-visible::after,.main-nav a.active::after{width:100%;}
 
 .btn{
   display:inline-flex;align-items:center;gap:10px;
@@ -332,34 +362,43 @@ body.nav-open{overflow:hidden;}
 .value-card{
   background:var(--gray-100);border-radius:20px;padding:32px 26px;
   border:1px solid transparent;
-  transition:transform .45s var(--ease),box-shadow .45s var(--ease),border-color .45s,background .45s;
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease),border-color .3s,background .3s;
   position:relative;overflow:hidden;
 }
 .value-card::before{
-  content:'';position:absolute;inset:0;background:var(--grad-primary);opacity:0;transition:opacity .45s var(--ease);z-index:0;
+  content:'';position:absolute;inset:0;background:var(--grad-primary);opacity:0;transition:opacity .3s var(--ease);z-index:0;
 }
-.value-card:hover{transform:translateY(-8px);box-shadow:0 24px 48px -20px rgba(10,44,97,.28);border-color:var(--blue-mid);}
+.value-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px -18px rgba(10,44,97,.28);border-color:var(--blue-mid);}
 .value-card:hover::before{opacity:1;}
-.value-card > *{position:relative;z-index:1;transition:color .4s;}
+.value-card > *{position:relative;z-index:1;transition:color .3s;}
 .value-card:hover h4,.value-card:hover p{color:#fff;}
 .value-icon{
   width:50px;height:50px;border-radius:14px;background:var(--grad-primary);
   display:flex;align-items:center;justify-content:center;margin-bottom:20px;
-  opacity:0;transform:scale(.8);
-  transition:transform .35s var(--ease),background .35s,opacity .5s var(--ease-entrance) .06s;
+  opacity:0;transform:scale(.85);
+  transition:transform .4s var(--ease-entrance) calc(var(--card-delay,0s) + 60ms),
+             opacity .4s var(--ease-entrance) calc(var(--card-delay,0s) + 60ms),
+             background .3s;
 }
 .value-card.in .value-icon{opacity:1;transform:scale(1);}
-.value-card:hover .value-icon{transform:rotate(-8deg) scale(1.08);background:#fff;}
-.value-icon svg{width:24px;height:24px;stroke:#fff;transition:stroke .35s;}
+/* hover gets its own immediate (delay-free) timing, independent of the
+   entrance transition above — otherwise the icon would feel laggy on
+   pointer interaction after it has already entered the viewport. */
+.value-card:hover .value-icon{
+  transform:scale(1.08);background:#fff;
+  transition:transform .3s var(--ease),background .3s;
+}
+.value-icon svg{width:24px;height:24px;stroke:#fff;transition:stroke .3s;}
 .value-card:hover .value-icon svg{stroke:var(--blue-deep);}
 .value-card h4{
   font-size:1.08rem;margin-bottom:8px;opacity:0;transform:translateY(8px);
-  transition:opacity .45s var(--ease-entrance) .14s,transform .45s var(--ease-entrance) .14s,color .35s;
+  transition:opacity .45s var(--ease-entrance) calc(var(--card-delay,0s) + 130ms),
+             transform .45s var(--ease-entrance) calc(var(--card-delay,0s) + 130ms),color .3s;
 }
 .value-card.in h4{opacity:1;transform:none;}
 .value-card p{
   font-size:.9rem;color:var(--gray-text);line-height:1.6;opacity:0;
-  transition:opacity .45s var(--ease-entrance) .22s,color .35s;
+  transition:opacity .45s var(--ease-entrance) calc(var(--card-delay,0s) + 200ms),color .3s;
 }
 .value-card.in p{opacity:1;}
 
@@ -375,8 +414,8 @@ body.nav-open{overflow:hidden;}
 .sind-visual{
   position:relative;aspect-ratio:4/5;border-radius:28px;overflow:hidden;
 }
-.sind-visual .zoom-layer{position:absolute;inset:0;transition:transform .8s var(--ease);}
-.sind-visual:hover .zoom-layer{transform:scale(1.08);}
+.sind-visual .zoom-layer{position:absolute;inset:0;transition:transform .5s var(--ease);}
+.sind-visual:hover .zoom-layer{transform:scale(1.03);}
 .sind-caption{
   position:absolute;left:24px;right:24px;bottom:24px;padding:18px 20px;
   background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-radius:16px;
@@ -398,18 +437,24 @@ body.nav-open{overflow:hidden;}
   font-family:var(--ff-title);font-weight:800;font-size:clamp(2.6rem,5vw,3.6rem);
   color:rgba(255,255,255,.28);line-height:1;margin-bottom:18px;
   opacity:0;transform:scale(.85);
-  transition:color .3s,transform .35s var(--ease),opacity .5s var(--ease-entrance) .05s;
+  transition:transform .4s var(--ease-entrance) calc(var(--card-delay,0s) + 50ms),
+             opacity .4s var(--ease-entrance) calc(var(--card-delay,0s) + 50ms),color .3s;
 }
 .pilar-item.in .pilar-num{opacity:1;transform:scale(1);}
-.pilar-item:hover .pilar-num{color:rgba(255,255,255,.85);transform:translateX(4px) scale(1);}
+/* hover responds immediately, independent of the entrance delay above */
+.pilar-item:hover .pilar-num{
+  color:rgba(255,255,255,.85);transform:translateX(4px) scale(1);
+  transition:transform .25s var(--ease),color .25s;
+}
 .pilar-item h4{
   color:#fff;font-size:1.15rem;margin-bottom:10px;opacity:0;transform:translateY(8px);
-  transition:opacity .45s var(--ease-entrance) .13s,transform .45s var(--ease-entrance) .13s;
+  transition:opacity .45s var(--ease-entrance) calc(var(--card-delay,0s) + 130ms),
+             transform .45s var(--ease-entrance) calc(var(--card-delay,0s) + 130ms);
 }
 .pilar-item.in h4{opacity:1;transform:none;}
 .pilar-item p{
   color:rgba(255,255,255,.72);font-size:.9rem;line-height:1.6;opacity:0;
-  transition:opacity .45s var(--ease-entrance) .21s;
+  transition:opacity .45s var(--ease-entrance) calc(var(--card-delay,0s) + 200ms);
 }
 .pilar-item.in p{opacity:1;}
 @media(max-width:860px){.pilar-grid{grid-template-columns:repeat(2,1fr);}}
@@ -431,9 +476,9 @@ body.nav-open{overflow:hidden;}
 .badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px;}
 .badge{
   background:var(--gray-100);border-radius:16px;padding:20px 16px;text-align:center;
-  transition:transform .4s var(--ease),box-shadow .4s var(--ease);
+  transition:transform .3s var(--ease),box-shadow .3s var(--ease);
 }
-.badge:hover{transform:translateY(-6px);box-shadow:0 16px 30px -14px rgba(10,44,97,.25);}
+.badge:hover{transform:translateY(-4px);box-shadow:0 14px 26px -14px rgba(10,44,97,.25);}
 .badge .num{font-family:var(--ff-title);font-weight:800;font-size:1.5rem;color:var(--blue-deep);}
 .badge .desc{font-size:.72rem;color:var(--gray-text);margin-top:4px;line-height:1.4;}
 @media(max-width:560px){.badge-grid{grid-template-columns:repeat(2,1fr);}}
@@ -443,9 +488,9 @@ body.nav-open{overflow:hidden;}
 .dif-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:8px;}
 .dif-item{
   background:#fff;border-radius:18px;padding:26px 22px;border:1px solid rgba(10,44,97,.08);
-  transition:transform .4s var(--ease),border-color .4s,box-shadow .4s;
+  transition:transform .3s var(--ease),border-color .3s,box-shadow .3s;
 }
-.dif-item:hover{transform:translateY(-6px);border-color:var(--blue-mid);box-shadow:0 20px 40px -20px rgba(10,44,97,.2);}
+.dif-item:hover{transform:translateY(-4px);border-color:var(--blue-mid);box-shadow:0 18px 34px -20px rgba(10,44,97,.2);}
 .dif-item span.n{font-family:var(--ff-title);font-weight:800;color:var(--blue-mid);font-size:.85rem;}
 .dif-item h4{font-size:1rem;margin-top:10px;}
 @media(max-width:1024px){.dif-grid{grid-template-columns:repeat(2,1fr);}}
@@ -479,8 +524,8 @@ body.nav-open{overflow:hidden;}
   -webkit-tap-highlight-color:transparent;
 }
 .g-item.big{grid-row:span 2;}
-.g-item .pattern{position:absolute;inset:0;transition:transform .7s var(--ease);}
-.g-item:hover .pattern{transform:scale(1.09);}
+.g-item .pattern{position:absolute;inset:0;transition:transform .5s var(--ease);}
+.g-item:hover .pattern{transform:scale(1.03);}
 .g-overlay{
   position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,44,97,0) 40%,rgba(6,26,58,.82) 100%);
   display:flex;align-items:flex-end;justify-content:space-between;gap:10px;padding:18px;opacity:.75;transition:opacity .4s var(--ease);
